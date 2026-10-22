@@ -1,6 +1,26 @@
 [
-  {"arquivo": "public/blog/manifesto-capa.jpg", "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/580255be-0359-4713-acec-9d83e9df194d/fb003a3e-c3d3-4ba2-bb7d-4be4d17edb17/Photorealistic_editorial_photo__Brazilian_coastal_city__a_mo.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiODJiNTc5NmNmNDA1MTY5MSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MjgxMjc4MH0.--oDDObYy3toK97HjK_9JGpGqSeIogo5ELWleYZe1TY"},
-  {"arquivo": "public/blog/manifesto-escritorio.jpg", "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/1a599791-de51-4e6f-ba3d-2bedbaf6c090/59869a6f-b953-4b3a-bd84-b8198773e7b8/Photorealistic_photo__bright_modern_office_of_a_real_estate_.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMjg5NjE5NTBmNTdkY2NkZiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MjgwNzEyMH0.wq0oboGXUDz2bKYWZGA0an2QbRBWuLn2alFPNLLDqL0"},
-  {"arquivo": "public/blog/leo-capa.jpg", "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/0949db48-f4bf-4194-95de-805890d1e248/2aa2bb3c-e076-491c-8a6f-f4f24a5ebcb5/Photorealistic_close_up_photo__a_construction_site_manager_s.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMmM2ZWJlZGRjNmM2YjQ3NyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5Mjc5NjEyNX0.Up7z2TrZZhClg9okafflnN6EKPsM5iaTrsyEjqyoBGU"},
-  {"arquivo": "public/blog/leo-concretagem.jpg", "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/f770b935-0e3e-43af-b4f5-b547a01f2dd2/6a787c07-3ece-450c-8a76-508982ea4048/Photorealistic_photo__early_morning_on_a_Brazilian_construct.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiYjM1YmY2YTU3MWFhM2EzZSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MjgwOTM4MX0.hMnOyO6cWsBUrwghcey5rfOwPasHwcURNaSfluHQ9K8"}
+  {
+    "arquivo": "public/blog/manifesto-capa.jpg",
+    "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/580255be-0359-4713-acec-9d83e9df194d/fb003a3e-c3d3-4ba2-bb7d-4be4d17edb17/Photorealistic_editorial_photo__Brazilian_coastal_city__a_mo.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiODJiNTc5NmNmNDA1MTY5MSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MjgxMjc4MH0.--oDDObYy3toK97HjK_9JGpGqSeIogo5ELWleYZe1TY"
+  },
+  {
+    "arquivo": "public/blog/manifesto-escritorio.jpg",
+    "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/1a599791-de51-4e6f-ba3d-2bedbaf6c090/59869a6f-b953-4b3a-bd84-b8198773e7b8/Photorealistic_photo__bright_modern_office_of_a_real_estate_.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMjg5NjE5NTBmNTdkY2NkZiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MjgwNzEyMH0.wq0oboGXUDz2bKYWZGA0an2QbRBWuLn2alFPNLLDqL0"
+  },
+  {
+    "arquivo": "public/blog/leo-capa.jpg",
+    "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/0949db48-f4bf-4194-95de-805890d1e248/2aa2bb3c-e076-491c-8a6f-f4f24a5ebcb5/Photorealistic_close_up_photo__a_construction_site_manager_s.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMmM2ZWJlZGRjNmM2YjQ3NyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5Mjc5NjEyNX0.Up7z2TrZZhClg9okafflnN6EKPsM5iaTrsyEjqyoBGU"
+  },
+  {
+    "arquivo": "public/blog/leo-concretagem.jpg",
+    "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/f770b935-0e3e-43af-b4f5-b547a01f2dd2/6a787c07-3ece-450c-8a76-508982ea4048/Photorealistic_photo__early_morning_on_a_Brazilian_construct.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiYjM1YmY2YTU3MWFhM2EzZSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MjgwOTM4MX0.hMnOyO6cWsBUrwghcey5rfOwPasHwcURNaSfluHQ9K8"
+  },
+  {
+    "arquivo": "public/blog/audio/manifesto-leo.mp3",
+    "url": "https://storage.googleapis.com/xi-backend/database/workspace/c4756b99ab5145b185d19ca0b4d32ce7/content_generation/GbT90D1nQj9WctS2CyyQ/T4Lg6YX2iMOY77yFlFJb/content.mp3?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=xi-backend-prod%40xi-labs.iam.gserviceaccount.com%2F20261022%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20261022T115833Z&X-Goog-Expires=7200&X-Goog-SignedHeaders=host&X-Goog-Signature=0f1e60a6e45d0654394bc9a3e506af7f1618c8805cfc7156f8ff840ba4a04077e2aca438d4cf036fadb05bc44135abc22db9094a239c19b2a479537ce958bc8753b3f0101dee6d15842b91f1c54a16d9ba9460a9849ec0b12ec914b728e99c53784bf6f959c2fb2173930c63a6bf0f6b5917188a841967301aaf57107a29bd509b0a9117563045890db7d7dd4f75ce0bf6974b74cdb0fa7e29b921cd9949d91a53fc12043ea7dce3ed45aeaf9834112fb08d4756f56945037f0548922959061239ced78674883c1c02804c5381ab4a171c7e49be9762b32cf71625b0d4f5d4dc6d804a0f26ad5abbe0708a4b53f568cfaaff9ca9752bcdf66fd1d9ce807a841c"
+  },
+  {
+    "arquivo": "public/blog/audio/conheca-o-leo.mp3",
+    "url": "https://storage.googleapis.com/xi-backend/database/workspace/c4756b99ab5145b185d19ca0b4d32ce7/content_generation/cLNPUmUQfTPEy9xbAkwV/AeP09A619SZ0zoJ2ebAQ/content.mp3?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=xi-backend-prod%40xi-labs.iam.gserviceaccount.com%2F20261022%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20261022T115849Z&X-Goog-Expires=7200&X-Goog-SignedHeaders=host&X-Goog-Signature=165ef70cbb5b44750ba0dc80a0ba893aeebbd4e06a890b3b6572115ce5089d342a77a77fee2b892a185111d00187bc8b81978fa375eb0eeaa8fd2e75d10fa3402d7db07a68de9b9eafacd228ba1b2f84351b5efa542e8b1dd6169511752b921a117b29edba48af29585f48d54c084f2c0321c2caa45b0bc36b5af919d1ac85f23b8d76a624f72c8c22ea10c5c456707492fa6fab339678b09ea63878b7ce42849614e885cea9364b7af2553b574054f620ac597dcbf5c7f7fb1ccca45c42446e68509dc6b192c9936be04b1a4fc0a29093388b5b2555e5e75c0c11a649047cc4f29e87029bd56531306296751863cdd839d07c7e2e16e84b4afe99ff121f33cb"
+  }
 ]

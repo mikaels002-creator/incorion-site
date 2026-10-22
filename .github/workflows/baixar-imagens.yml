@@ -1,4 +1,4 @@
-# Baixa as imagens geradas por IA (lista em scripts/imagens-para-baixar.json),
+# Baixa as imagens e áudios gerados por IA (lista em scripts/imagens-para-baixar.json),
 # converte para JPG leve (1600 px) e grava no site. A Vercel publica sozinha depois.
 name: Baixar imagens do blog
 on:
@@ -21,7 +21,10 @@ jobs:
             [ -f "$arq" ] && continue
             mkdir -p "$(dirname "$arq")"
             curl -fsSL "$url" -o /tmp/original
-            convert /tmp/original -resize '1600x1600>' -strip -quality 80 -interlace Plane "$arq"
+            case "$arq" in
+              *.jpg) convert /tmp/original -resize '1600x1600>' -strip -quality 80 -interlace Plane "$arq" ;;
+              *) cp /tmp/original "$arq" ;;
+            esac
             echo "ok: $arq"
           done
       - name: Gravar no site
