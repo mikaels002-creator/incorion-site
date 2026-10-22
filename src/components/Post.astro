@@ -36,7 +36,9 @@ const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 
             </div>
           </div>
         </div>
-        <img class="capa" src={capaSrc} alt={capaAlt} width="1600" height="893" loading="eager" />
+        {d.video
+          ? <video class="capa" src={d.video} poster={capaSrc} autoplay muted loop playsinline aria-label={capaAlt} width="1600" height="893"></video>
+          : <img class="capa" src={capaSrc} alt={capaAlt} width="1600" height="893" loading="eager" />}
       </div>
     </header>
 

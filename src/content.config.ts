@@ -15,6 +15,7 @@ const blog = defineCollection({
     capa: z.string().optional(),
     capaAlt: z.string().optional(),
     audio: z.string().optional(),
+    video: z.string().optional(),
   }),
 });
 

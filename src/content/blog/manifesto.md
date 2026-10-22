@@ -8,6 +8,7 @@ rascunho: true
 capa: /blog/manifesto-capa.jpg
 capaAlt: Engenheiro e empresário conferem um tablet diante de um prédio em construção
 audio: /blog/audio/manifesto-leo.mp3
+video: /blog/video/manifesto-capa.mp4
 ---
 
 Quem incorpora vive entre dois mundos. De um lado, o canteiro: concreto, prazo, chuva, mão de obra, fornecedor que atrasa. Do outro, o escritório: contas a pagar, repasse de clientes, contrato com investidor, estoque de unidades, relatório para o banco.

@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Baixar e converter
         run: |
-          sudo apt-get install -y -qq imagemagick jq > /dev/null
+          sudo apt-get install -y -qq imagemagick jq ffmpeg > /dev/null
           jq -c '.[]' scripts/imagens-para-baixar.json | while read -r item; do
             arq=$(echo "$item" | jq -r .arquivo); url=$(echo "$item" | jq -r .url)
             [ -f "$arq" ] && continue
@@ -23,6 +23,7 @@ jobs:
             curl -fsSL "$url" -o /tmp/original
             case "$arq" in
               *.jpg) convert /tmp/original -resize '1600x1600>' -strip -quality 80 -interlace Plane "$arq" ;;
+              *.mp4) ffmpeg -loglevel error -y -i /tmp/original -an -vf "scale='min(1280,iw)':-2" -c:v libx264 -crf 26 -preset slow -movflags +faststart -pix_fmt yuv420p "$arq" ;;
               *) cp /tmp/original "$arq" ;;
             esac
             echo "ok: $arq"

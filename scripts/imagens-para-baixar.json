@@ -22,5 +22,9 @@
   {
     "arquivo": "public/blog/audio/conheca-o-leo.mp3",
     "url": "https://storage.googleapis.com/xi-backend/database/workspace/c4756b99ab5145b185d19ca0b4d32ce7/content_generation/cLNPUmUQfTPEy9xbAkwV/AeP09A619SZ0zoJ2ebAQ/content.mp3?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=xi-backend-prod%40xi-labs.iam.gserviceaccount.com%2F20261022%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20261022T115849Z&X-Goog-Expires=7200&X-Goog-SignedHeaders=host&X-Goog-Signature=165ef70cbb5b44750ba0dc80a0ba893aeebbd4e06a890b3b6572115ce5089d342a77a77fee2b892a185111d00187bc8b81978fa375eb0eeaa8fd2e75d10fa3402d7db07a68de9b9eafacd228ba1b2f84351b5efa542e8b1dd6169511752b921a117b29edba48af29585f48d54c084f2c0321c2caa45b0bc36b5af919d1ac85f23b8d76a624f72c8c22ea10c5c456707492fa6fab339678b09ea63878b7ce42849614e885cea9364b7af2553b574054f620ac597dcbf5c7f7fb1ccca45c42446e68509dc6b192c9936be04b1a4fc0a29093388b5b2555e5e75c0c11a649047cc4f29e87029bd56531306296751863cdd839d07c7e2e16e84b4afe99ff121f33cb"
+  },
+  {
+    "arquivo": "public/blog/video/manifesto-capa.mp4",
+    "url": "https://dnznrvs05pmza.cloudfront.net/seedance_2/cgt-20261022201215-lcxb9/Slow_cinematic_push_in_toward_the_two_men_reviewing_the_tablet__The_tower_crane_in_the_background_sl.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNDU5YTgyN2I3ZjQxN2Q0NSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5Mjc3MTQ1MX0.joklKIYfxPkBzUWfYQjsCwGX258EjP9N6vmt5PgfoAY"
   }
 ]
