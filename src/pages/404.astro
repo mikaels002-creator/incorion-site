@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Página não encontrada">
+  <section class="erro">
+    <div class="recorte">
+      <h1>Essa página não existe.</h1>
+      <p>O endereço pode ter mudado. Volte para o início ou veja os posts do blog.</p>
+      <div class="acoes">
+        <a class="botao" href="/">Ir para o início</a>
+        <a class="botao claro" href="/blog">Ver o blog</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .erro { background: var(--noite); color: var(--branco); padding-block: 120px; min-height: 70svh; }
+  h1 { font-size: var(--t-h2); }
+  p { margin-top: 20px; color: var(--suave-escuro); font-size: var(--t-frase); }
+  .acoes { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
+</style>

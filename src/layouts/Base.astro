@@ -1,0 +1,117 @@
+---
+import '../styles/global.css';
+import { SITE, NAV } from '../config';
+
+interface Props {
+  titulo?: string;
+  descricao?: string;
+  imagem?: string;
+  tipo?: 'website' | 'article';
+}
+const { titulo, descricao = SITE.descricao, imagem = '/compartilhar.png', tipo = 'website' } = Astro.props;
+const tituloCompleto = titulo ? `${titulo} | ${SITE.nome}` : `${SITE.nome} | Gestão de incorporadoras`;
+const canonica = new URL(Astro.url.pathname, SITE.url).href;
+const imagemUrl = new URL(imagem, SITE.url).href;
+const aqui = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descricao} />
+    <link rel="canonical" href={canonica} />
+    <meta name="theme-color" content="#0E1A33" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={tipo} />
+    <meta property="og:site_name" content={SITE.nome} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={imagemUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap"
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+    <header class="topo">
+      <div class="recorte barra">
+        <a href="/" class="marca" aria-label="Incorion, página inicial">
+          <img src="/marca/incorion-logo-horizontal-transparente-para-fundo-escuro.svg" alt="Incorion" width="662" height="216" />
+        </a>
+        <nav aria-label="Principal">
+          <ul>
+            {NAV.map((item) => (
+              <li><a href={item.href} aria-current={aqui === item.href ? 'page' : undefined}>{item.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+        <a class="botao" href="/#lista-de-espera">Lista de espera</a>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <slot />
+    </main>
+
+    <footer class="rodape">
+      <div class="recorte">
+        <p class="rodape-frase">{SITE.slogan}</p>
+        <div class="rodape-linhas">
+          <ul>
+            <li><a href="/#plataforma">Plataforma</a></li>
+            <li><a href="/#leo">Leo</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/#lista-de-espera">Lista de espera</a></li>
+          </ul>
+          <p><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+        </div>
+        <img class="rodape-nome" src="/marca/incorion-logo-monocromatico-branco.svg" alt="" width="662" height="216" loading="lazy" />
+        <p class="rodape-direitos">© {new Date().getFullYear()} Incorion. Todos os direitos reservados.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .pular { position: absolute; left: 16px; top: -60px; z-index: 10; background: var(--branco); color: var(--noite); padding: 12px 16px; }
+  .pular:focus { top: 12px; }
+
+  .topo { background: var(--noite); color: var(--branco); position: sticky; top: 0; z-index: 5; }
+  .barra { display: flex; align-items: center; gap: 32px; min-height: 76px; }
+  .marca img { width: 132px; }
+  nav { margin-left: auto; }
+  nav ul { list-style: none; display: flex; gap: 28px; margin: 0; padding: 0; }
+  nav a { text-decoration: none; font-weight: 500; color: var(--suave-escuro); transition: color var(--mov); }
+  nav a:hover, nav a[aria-current='page'] { color: var(--branco); }
+  .topo .botao { min-height: 44px; padding: 0 20px; }
+
+  @media (max-width: 720px) {
+    .barra { gap: 16px; min-height: 64px; }
+    .marca img { width: 112px; }
+    nav ul { gap: 16px; }
+    nav li:nth-child(2) { display: none; }
+    .topo .botao { display: none; }
+  }
+
+  .rodape { background: var(--noite); color: var(--branco); padding-block: 96px 32px; }
+  .rodape-frase { font-family: var(--f-titulo); font-weight: 600; font-size: clamp(1.5rem, 0.9rem + 2.6vw, 4rem); letter-spacing: -0.03em; line-height: 1.02; max-width: none; }
+  .rodape-linhas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; margin-top: 56px; color: var(--suave-escuro); }
+  .rodape-linhas ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 12px 28px; }
+  .rodape-linhas a { text-decoration: none; transition: color var(--mov); }
+  .rodape-linhas a:hover { color: var(--branco); }
+  .rodape-nome { width: 100%; margin-top: 96px; opacity: .96; }
+  .rodape-direitos { margin-top: 24px; font-size: var(--t-pequeno); color: var(--suave-escuro); }
+</style>

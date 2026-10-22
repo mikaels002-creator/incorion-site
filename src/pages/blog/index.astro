@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.rascunho))
+  .sort((a, b) => b.data.data.valueOf() - a.data.data.valueOf());
+const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Base titulo="Blog" descricao="Gestão de incorporadoras, mercado, crédito imobiliário e as novidades da Incorion e do Leo.">
+  <section class="topo-blog">
+    <div class="recorte">
+      <h1>Blog da Incorion</h1>
+      <p>Gestão de obras e incorporação, mercado e crédito imobiliário, e as novidades da plataforma e do Leo.</p>
+    </div>
+  </section>
+
+  <section class="lista">
+    <div class="recorte">
+      {posts.length === 0 ? (
+        <p class="vazio">O primeiro post chega na próxima terça-feira.</p>
+      ) : (
+        <ul>
+          {posts.map((p) => (
+            <li>
+              <a href={`/blog/${p.id}`}>
+                <span class="meta">{p.data.categoria} · {fmt.format(p.data.data)} · por {p.data.autor}</span>
+                <h2>{p.data.titulo}</h2>
+                <p>{p.data.resumo}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .topo-blog { background: var(--noite); color: var(--branco); padding-block: 96px 88px; }
+  .topo-blog h1 { font-size: var(--t-hero); line-height: .95; letter-spacing: -0.045em; }
+  .topo-blog p { margin-top: 28px; max-width: 32em; font-size: var(--t-frase); line-height: 1.35; color: var(--suave-escuro); }
+  .lista { padding-block: 96px var(--secao); }
+  .vazio { font-size: var(--t-frase); }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 64px; }
+  li a { display: block; text-decoration: none; max-width: 52em; }
+  .meta { color: var(--grafite); font-size: var(--t-pequeno); }
+  li h2 { margin-top: 10px; font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem); transition: color var(--mov); }
+  li a:hover h2 { color: var(--cobalto-texto); }
+  li p { margin-top: 12px; }
+</style>

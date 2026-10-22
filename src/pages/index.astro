@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, MODULOS } from '../config';
+
+const assunto = encodeURIComponent('Lista de espera Incorion');
+const corpo = encodeURIComponent(
+  'Olá! Quero entrar na lista de espera da Incorion.\n\nNome:\nEmpresa:\nCargo:\nWhatsApp:\nCidade:\nObras em andamento:\n'
+);
+const listaDeEspera = `mailto:${SITE.email}?subject=${assunto}&body=${corpo}`;
+---
+<Base>
+  <section class="hero">
+    <div class="recorte hero-grade">
+      <div class="hero-texto">
+        <h1>A incorporação inteira, em uma plataforma.</h1>
+        <p>Do terreno às chaves, no mesmo sistema. Com o Leo, a IA que trabalha no WhatsApp da sua incorporadora.</p>
+        <a class="botao" href="#lista-de-espera">Entrar na lista de espera</a>
+      </div>
+      <svg class="torre" viewBox="26 22 60 86" role="img" aria-labelledby="torre-titulo">
+        <title id="torre-titulo">Símbolo da Incorion: uma torre de quatro lajes; a do topo, laranja, é o Leo.</title>
+        <polygon class="laje l4" points="38,92 82,92 74,104 30,104" />
+        <polygon class="laje l3" points="44,70 78,70 70,82 36,82" />
+        <polygon class="laje l2" points="50,48 74,48 66,60 42,60" />
+        <polygon class="laje l1" points="56,26 70,26 62,38 48,38" />
+      </svg>
+    </div>
+  </section>
+
+  <section class="plataforma" id="plataforma">
+    <div class="recorte">
+      <h2>Cada etapa da obra tem o seu módulo.</h2>
+      <p class="frase">Você começa pelo que mais dói hoje e liga os outros quando quiser. Tudo conversa entre si.</p>
+      <ul class="modulos">
+        {MODULOS.map((m) => (
+          <li>
+            <h3>{m.nome}</h3>
+            <p>{m.texto}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="leo" id="leo">
+    <div class="recorte leo-grade">
+      <img src="/marca/leo-avatar.svg" alt="" width="512" height="512" loading="lazy" />
+      <div>
+        <h2>O Leo é a laje do topo.</h2>
+        <p class="frase">Uma IA feita para o mercado imobiliário. Ele lê as mensagens dos grupos de WhatsApp, lança as contas, cobra os prazos e te avisa antes do problema chegar.</p>
+        <p>Módulo à parte, contratado junto com a plataforma.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="espera" id="lista-de-espera">
+    <div class="recorte espera-grade">
+      <h2>Lista de espera aberta.</h2>
+      <div>
+        <p class="frase">A Incorion abre em breve para as primeiras incorporadoras. Deixe seu contato e seja avisado antes.</p>
+        <a class="botao claro" href={listaDeEspera}>Quero entrar na lista</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { background: var(--noite); color: var(--branco); overflow: hidden; }
+  .hero-grade { display: grid; grid-template-columns: 3.2fr 1fr; align-items: center; gap: 48px; min-height: calc(100svh - 76px); padding-block: 48px; }
+  .hero-texto { padding-block: 24px; }
+  .hero h1 { font-size: clamp(2.1rem, 0.6rem + 5.2vw, 5.25rem); text-wrap: wrap; line-height: .95; letter-spacing: -0.045em; }
+  .hero p { margin-top: 32px; max-width: 34em; font-size: var(--t-frase); line-height: 1.35; color: var(--branco); }
+  .hero .botao { margin-top: 40px; }
+
+  .torre { width: 100%; max-height: 72svh; }
+  .laje { fill: var(--cobalto); }
+  .laje.l1 { fill: var(--leo); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .laje { animation: subir 900ms cubic-bezier(.2, .7, .2, 1) both; }
+    .l4 { animation-delay: 80ms; }
+    .l3 { animation-delay: 200ms; }
+    .l2 { animation-delay: 320ms; }
+    .l1 { animation-delay: 520ms; }
+    @keyframes subir { from { opacity: 0; transform: translateY(14px); } }
+  }
+
+  .plataforma { padding-block: var(--secao); }
+  .plataforma h2, .espera h2, .leo h2 { font-size: var(--t-h2); max-width: 16ch; }
+  .frase { margin-top: 24px; font-size: var(--t-frase); line-height: 1.35; max-width: 30em; }
+  .modulos { list-style: none; margin: 96px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px 48px; }
+  .modulos h3 { font-size: var(--t-h3); letter-spacing: -0.02em; }
+  .modulos p { margin-top: 10px; color: var(--grafite); }
+
+  .leo { background: var(--concreto); padding-block: var(--secao); }
+  .leo-grade { display: grid; grid-template-columns: minmax(200px, 1fr) 2fr; gap: 64px; align-items: center; }
+  .leo img { width: 100%; max-width: 360px; }
+  .leo p:last-child { margin-top: 24px; color: var(--grafite); }
+
+  .espera { background: var(--cobalto-texto); color: var(--branco); padding-block: var(--secao); }
+  .espera-grade { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: end; }
+  .espera .frase { margin-top: 0; }
+  .espera .botao { margin-top: 32px; }
+
+  @media (max-width: 900px) {
+    .hero-grade { grid-template-columns: 1fr; min-height: auto; padding-top: 48px; gap: 0; }
+    .hero-texto { padding-bottom: 48px; }
+    .torre { max-width: 70%; justify-self: end; max-height: none; }
+    .modulos { grid-template-columns: 1fr 1fr; margin-top: 64px; }
+    .leo-grade, .espera-grade { grid-template-columns: 1fr; gap: 40px; }
+    .leo img { max-width: 200px; }
+  }
+  @media (max-width: 560px) {
+    .modulos { grid-template-columns: 1fr; gap: 36px; }
+  }
+</style>
