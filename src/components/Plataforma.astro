@@ -1,0 +1,276 @@
+---
+// Tour pelas telas da plataforma, com dados ILUSTRATIVOS (fictícios).
+const abas = [
+  { id: 'financeiro', nome: 'Financeiro' },
+  { id: 'obras', nome: 'Obras' },
+  { id: 'comercial', nome: 'Comercial' },
+  { id: 'compras', nome: 'Compras' },
+  { id: 'investidores', nome: 'Investidores' },
+];
+const menu = ['Início', 'Financeiro', 'Orçamento', 'Compras', 'Obras', 'Comercial', 'Contratos', 'Pós-obra', 'Investidores'];
+const contas = [
+  ['Concreteira Vale Forte', 'Estrutura', '28/10', 'R$ 18.400,00', 'aprovar', 'Aguardando aprovação'],
+  ['Aço Norte Distribuidora', 'Estrutura', '29/10', 'R$ 16.368,00', 'agendado', 'Agendado'],
+  ['Elétrica Ponto Certo', 'Instalações', '30/10', 'R$ 9.870,00', 'agendado', 'Agendado'],
+  ['Locação Alfa Andaimes', 'Canteiro', '25/10', 'R$ 3.250,00', 'pago', 'Pago'],
+  ['Hidráulica Fluxo', 'Instalações', '24/10', 'R$ 12.300,00', 'pago', 'Pago'],
+];
+const barras = [['Mai', 62, 48], ['Jun', 70, 55], ['Jul', 58, 61], ['Ago', 80, 66], ['Set', 74, 70], ['Out', 88, 72]];
+const etapas = [['Fundação', 100], ['Estrutura', 64], ['Alvenaria', 38], ['Instalações', 22], ['Acabamento', 0]];
+const vendidas = ['801','803','704','804','604','601','603','503','502','401','404','402','304','303','204','202','201','104','101'];
+const reservadas = ['802','703','504','301'];
+const unidades = [];
+for (let a = 8; a >= 1; a--) for (let f = 1; f <= 4; f++) { const id = `${a}0${f}`; unidades.push({ id, s: vendidas.includes(id) ? 'v' : reservadas.includes(id) ? 'r' : 'l' }); }
+---
+<div class="tour">
+  <div class="tour-abas" role="tablist" aria-label="Telas da plataforma">
+    {abas.map((a, i) => (
+      <button type="button" role="tab" id={`aba-${a.id}`} aria-controls={`tela-${a.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{a.nome}</button>
+    ))}
+  </div>
+
+  <div class="janela" data-ui>
+    <div class="janela-barra"><i></i><i></i><i></i><span>app.incorion.com.br</span></div>
+    <div class="app">
+      <aside class="app-lateral" aria-hidden="true">
+        <img src="/marca/incorion-logo-horizontal-transparente-para-fundo-escuro.svg" alt="" width="662" height="216" />
+        <p class="app-empresa">Construtora Exemplo<br /><span>Residencial Aurora</span></p>
+        <ul>{menu.map((m) => <li class={m === 'Financeiro' ? 'ativo' : ''} data-menu={m.toLowerCase()}>{m}</li>)}</ul>
+      </aside>
+
+      <div class="app-telas">
+        <!-- Financeiro -->
+        <section class="tela" role="tabpanel" id="tela-financeiro" aria-labelledby="aba-financeiro">
+          <header class="tela-cab"><div><p class="tela-trilha">Financeiro</p><h3>Contas a pagar</h3></div><span class="filtro">Outubro de 2026</span></header>
+          <div class="kpis">
+            <div><span>A pagar no mês</span><strong>R$ 60.188</strong></div>
+            <div><span>Saldo em conta</span><strong>R$ 412.930</strong></div>
+            <div><span>A receber no mês</span><strong>R$ 284.600</strong></div>
+            <div class="leo-kpi"><span>Lançadas pelo Leo</span><strong>37</strong></div>
+          </div>
+          <div class="duas">
+            <table class="tabela">
+              <thead><tr><th>Fornecedor</th><th>Etapa</th><th>Vence</th><th class="dir">Valor</th><th>Situação</th></tr></thead>
+              <tbody>
+                {contas.map(([f, e, v, val, s, t]) => (
+                  <tr><td>{f}</td><td>{e}</td><td>{v}</td><td class="dir num">{val}</td><td><span class={`chip ${s}`}>{t}</span></td></tr>
+                ))}
+              </tbody>
+            </table>
+            <div class="grafico">
+              <p class="mini-titulo">Entradas x saídas (R$ mil)</p>
+              <div class="barras">
+                {barras.map(([m, e, s]) => (
+                  <div class="barra-col"><div class="par"><span class="b-ent" style={`height:${e}%`}></span><span class="b-sai" style={`height:${s}%`}></span></div><small>{m}</small></div>
+                ))}
+              </div>
+              <p class="legenda"><i class="li-ent"></i>Entradas <i class="li-sai"></i>Saídas</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Obras -->
+        <section class="tela" role="tabpanel" id="tela-obras" aria-labelledby="aba-obras" hidden>
+          <header class="tela-cab"><div><p class="tela-trilha">Obras · Residencial Aurora</p><h3>Avanço da obra</h3></div><span class="filtro">Semana 42</span></header>
+          <div class="kpis">
+            <div><span>Avanço físico</span><strong>46%</strong></div>
+            <div><span>Previsto para hoje</span><strong>48%</strong></div>
+            <div><span>Custo realizado</span><strong>R$ 4,1 mi</strong></div>
+            <div><span>Equipe em campo</span><strong>23</strong></div>
+          </div>
+          <div class="duas">
+            <div class="etapas">
+              <p class="mini-titulo">Etapas</p>
+              {etapas.map(([n, p]) => (
+                <div class="etapa"><span>{n}</span><div class="trilho"><i style={`width:${p}%`}></i></div><strong>{p}%</strong></div>
+              ))}
+            </div>
+            <div class="diario">
+              <p class="mini-titulo">Diário de obra · hoje</p>
+              <div class="registro"><strong>07:40</strong><p>Concretagem da 6ª laje iniciada. 42 m³ previstos.</p><span class="tag">Áudio do mestre de obras</span></div>
+              <div class="registro"><strong>10:15</strong><p>Chegada de 2,4 t de aço CA-50. Nota fiscal conferida.</p><span class="tag">Foto · nota fiscal</span></div>
+              <div class="registro leo-reg"><strong>11:02</strong><p>Leo: a concretagem está dentro do prazo. Próxima laje prevista para 05/11.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Comercial -->
+        <section class="tela" role="tabpanel" id="tela-comercial" aria-labelledby="aba-comercial" hidden>
+          <header class="tela-cab"><div><p class="tela-trilha">Comercial · Torre A</p><h3>Espelho de vendas</h3></div><span class="filtro">32 unidades</span></header>
+          <div class="kpis">
+            <div><span>Vendidas</span><strong>19</strong></div>
+            <div><span>Reservadas</span><strong>4</strong></div>
+            <div><span>Livres</span><strong>9</strong></div>
+            <div><span>VGV vendido</span><strong>R$ 14,2 mi</strong></div>
+          </div>
+          <div class="duas">
+            <div class="espelho-mini">
+              {unidades.map((u) => <span class={`u ${u.s}`}>{u.id}</span>)}
+            </div>
+            <div class="diario">
+              <p class="mini-titulo">Últimas movimentações</p>
+              <div class="registro"><strong>Hoje</strong><p>Unidade 702 reservada por Ana Paula (Imobiliária Horizonte). Vence em 48 h.</p></div>
+              <div class="registro"><strong>Ontem</strong><p>Proposta da 603 aprovada. Contrato gerado para assinatura.</p></div>
+              <div class="registro"><strong>20/10</strong><p>Tabela reajustada em 2,5% para as unidades livres.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Compras -->
+        <section class="tela" role="tabpanel" id="tela-compras" aria-labelledby="aba-compras" hidden>
+          <header class="tela-cab"><div><p class="tela-trilha">Compras</p><h3>Cotação · aço CA-50, 2,4 t</h3></div><span class="filtro">3 fornecedores</span></header>
+          <table class="tabela">
+            <thead><tr><th>Fornecedor</th><th class="dir">Preço/kg</th><th class="dir">Total</th><th>Prazo</th><th>Pagamento</th><th></th></tr></thead>
+            <tbody>
+              <tr class="melhor"><td>Aço Norte Distribuidora</td><td class="dir num">R$ 6,82</td><td class="dir num">R$ 16.368</td><td>3 dias</td><td>28 dias</td><td><span class="chip pago">Melhor preço</span></td></tr>
+              <tr><td>Ferro &amp; Cia</td><td class="dir num">R$ 6,95</td><td class="dir num">R$ 16.680</td><td>2 dias</td><td>À vista</td><td></td></tr>
+              <tr><td>Metalúrgica Litoral</td><td class="dir num">R$ 7,10</td><td class="dir num">R$ 17.040</td><td>5 dias</td><td>30 dias</td><td></td></tr>
+            </tbody>
+          </table>
+          <div class="kpis kpis-baixo">
+            <div><span>Previsto no orçamento</span><strong>R$ 17.280</strong></div>
+            <div><span>Economia</span><strong>R$ 912</strong></div>
+            <div><span>Pedido</span><strong>Aguardando aprovação</strong></div>
+          </div>
+        </section>
+
+        <!-- Investidores -->
+        <section class="tela" role="tabpanel" id="tela-investidores" aria-labelledby="aba-investidores" hidden>
+          <header class="tela-cab"><div><p class="tela-trilha">Investidores</p><h3>Relatório do 3º trimestre</h3></div><span class="filtro">Residencial Aurora</span></header>
+          <div class="kpis">
+            <div><span>VGV</span><strong>R$ 24,1 mi</strong></div>
+            <div><span>Vendido</span><strong>59%</strong></div>
+            <div><span>Obra concluída</span><strong>46%</strong></div>
+            <div><span>Margem prevista</span><strong>22%</strong></div>
+          </div>
+          <div class="duas">
+            <div class="etapas">
+              <p class="mini-titulo">Orçamento x realizado</p>
+              {[['Terreno', 100], ['Projetos e aprovações', 96], ['Obra', 44], ['Comercial e marketing', 51], ['Impostos e taxas', 47]].map(([n, p]) => (
+                <div class="etapa"><span>{n}</span><div class="trilho"><i style={`width:${p}%`}></i></div><strong>{p}%</strong></div>
+              ))}
+            </div>
+            <div class="diario">
+              <p class="mini-titulo">Resumo para os sócios</p>
+              <div class="registro"><p>Vendas acima da meta do trimestre em 8%. Obra 2 pontos atrás do cronograma, recuperável até dezembro.</p></div>
+              <div class="registro"><p>Caixa suficiente para os próximos 7 meses de obra, considerando os recebíveis em carteira.</p></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <p class="tour-nota">Telas ilustrativas, com dados fictícios.</p>
+</div>
+
+<script is:inline>
+  (() => {
+    const abas = [...document.querySelectorAll('.tour-abas [role=tab]')];
+    const itens = document.querySelectorAll('.app-lateral li');
+    const ativar = (aba, foco) => {
+      abas.forEach((a) => {
+        const sel = a === aba;
+        a.setAttribute('aria-selected', String(sel)); a.tabIndex = sel ? 0 : -1;
+        document.getElementById(a.getAttribute('aria-controls')).hidden = !sel;
+      });
+      itens.forEach((li) => li.classList.toggle('ativo', li.dataset.menu === aba.textContent.trim().toLowerCase()));
+      if (foco) aba.focus();
+    };
+    abas.forEach((a, i) => {
+      a.addEventListener('click', () => ativar(a));
+      a.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') ativar(abas[(i + 1) % abas.length], true);
+        if (e.key === 'ArrowLeft') ativar(abas[(i - 1 + abas.length) % abas.length], true);
+      });
+    });
+  })();
+</script>
+
+<style>
+  .tour-abas { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+  .tour-abas button { font: 600 1rem var(--f-texto); padding: 12px 20px; border-radius: 99px; border: 0; background: var(--branco); color: var(--noite); cursor: pointer; min-height: 46px; box-shadow: inset 0 0 0 1px #D5DAE1; transition: background-color var(--mov), color var(--mov), box-shadow var(--mov); }
+  .tour-abas button:hover { box-shadow: inset 0 0 0 1px var(--cobalto-texto); }
+  .tour-abas button[aria-selected='true'] { background: var(--noite); color: var(--branco); box-shadow: none; }
+  .tour-nota { margin-top: 14px; text-align: center; font-size: var(--t-pequeno); color: var(--grafite); }
+
+  [data-ui].janela { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(14, 26, 51, .18); font: 14px/1.4 var(--f-texto); color: #0E1A33; }
+  [data-ui] .janela-barra { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #E9ECF1; }
+  [data-ui] .janela-barra i { width: 10px; height: 10px; border-radius: 50%; background: #C5CBD4; }
+  [data-ui] .janela-barra span { margin-left: 12px; background: #fff; border-radius: 6px; padding: 3px 12px; font-size: 12px; color: #556070; }
+  [data-ui] .app { display: grid; grid-template-columns: 210px 1fr; min-height: 520px; }
+  [data-ui] .app-lateral { background: #0E1A33; color: #B9C2D3; padding: 18px 12px; }
+  [data-ui] .app-lateral img { width: 108px; margin: 0 8px 18px; }
+  [data-ui] .app-empresa { margin: 0 8px 16px; padding: 10px; background: #16233F; border-radius: 8px; color: #fff; font-weight: 600; font-size: 13px; }
+  [data-ui] .app-empresa span { font-weight: 400; color: #B9C2D3; }
+  [data-ui] .app-lateral ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  [data-ui] .app-lateral li { padding: 8px 12px; border-radius: 6px; font-size: 13px; transition: background-color 200ms ease, color 200ms ease; }
+  [data-ui] .app-lateral li.ativo { background: #2F4BE0; color: #fff; font-weight: 600; }
+  [data-ui] .app-telas { background: #F5F7FA; padding: 22px; min-width: 0; }
+  [data-ui] .tela[hidden] { display: none; }
+  [data-ui] .tela { animation: entra 300ms ease; }
+  @keyframes entra { from { opacity: 0; transform: translateY(6px); } }
+  [data-ui] .tela-cab { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 16px; }
+  [data-ui] .tela-trilha { font-size: 12px; color: #556070; }
+  [data-ui] .tela-cab h3 { font: 700 20px/1.2 var(--f-titulo); letter-spacing: -0.01em; }
+  [data-ui] .filtro { background: #fff; border: 1px solid #D5DAE1; border-radius: 8px; padding: 6px 12px; font-size: 13px; white-space: nowrap; }
+  [data-ui] .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+  [data-ui] .kpis-baixo { grid-template-columns: repeat(3, 1fr); margin: 14px 0 0; }
+  [data-ui] .kpis div { background: #fff; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; border: 1px solid #E3E7EE; }
+  [data-ui] .kpis span { font-size: 12px; color: #556070; }
+  [data-ui] .kpis strong { font: 700 18px/1.2 var(--f-titulo); }
+  [data-ui] .leo-kpi strong { color: #C2410C; }
+  [data-ui] .duas { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; }
+  [data-ui] .tabela { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #E3E7EE; }
+  [data-ui] .tabela th { text-align: left; font-size: 12px; color: #556070; font-weight: 600; padding: 10px 12px; background: #FAFBFC; border-bottom: 1px solid #E3E7EE; }
+  [data-ui] .tabela td { padding: 10px 12px; border-bottom: 1px solid #EEF0F3; font-size: 13px; }
+  [data-ui] .tabela tr:last-child td { border-bottom: 0; }
+  [data-ui] .tabela .melhor td { background: #F2FBF5; }
+  [data-ui] .dir { text-align: right; }
+  [data-ui] .num { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+  [data-ui] .chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+  [data-ui] .chip.pago { background: #E3F6EA; color: #17663A; }
+  [data-ui] .chip.aprovar { background: #FFE9DC; color: #A8380A; }
+  [data-ui] .chip.agendado { background: #E6EBFF; color: #2F4BE0; }
+  [data-ui] .grafico, [data-ui] .etapas, [data-ui] .diario, [data-ui] .espelho-mini { background: #fff; border-radius: 10px; padding: 14px; border: 1px solid #E3E7EE; }
+  [data-ui] .mini-titulo { font-weight: 600; font-size: 13px; margin-bottom: 10px; }
+  [data-ui] .barras { display: flex; align-items: flex-end; justify-content: space-between; height: 150px; gap: 6px; }
+  [data-ui] .barra-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; }
+  [data-ui] .par { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; }
+  [data-ui] .par span { width: 40%; border-radius: 3px 3px 0 0; }
+  [data-ui] .b-ent { background: #2F4BE0; }
+  [data-ui] .b-sai { background: #B9C2D3; }
+  [data-ui] .barra-col small { font-size: 11px; color: #556070; }
+  [data-ui] .legenda { margin-top: 8px; font-size: 12px; color: #556070; display: flex; align-items: center; gap: 6px; }
+  [data-ui] .legenda i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-left: 6px; }
+  [data-ui] .li-ent { background: #2F4BE0; } [data-ui] .li-sai { background: #B9C2D3; }
+  [data-ui] .etapa { display: grid; grid-template-columns: 1fr 1.4fr 42px; gap: 10px; align-items: center; padding: 7px 0; font-size: 13px; }
+  [data-ui] .trilho { height: 8px; background: #EEF0F3; border-radius: 99px; overflow: hidden; }
+  [data-ui] .trilho i { display: block; height: 100%; background: #2F4BE0; border-radius: 99px; }
+  [data-ui] .etapa strong { text-align: right; font-variant-numeric: tabular-nums; }
+  [data-ui] .registro { padding: 9px 0; border-top: 1px solid #EEF0F3; font-size: 13px; display: grid; gap: 4px; }
+  [data-ui] .registro:first-of-type { border-top: 0; }
+  [data-ui] .registro strong { font-size: 12px; color: #556070; }
+  [data-ui] .tag { justify-self: start; font-size: 11px; background: #EEF0F3; border-radius: 99px; padding: 2px 8px; color: #556070; }
+  [data-ui] .leo-reg p { color: #A8380A; font-weight: 600; }
+  [data-ui] .espelho-mini { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; align-content: start; }
+  [data-ui] .u { border-radius: 5px; padding: 8px 4px; text-align: center; font-size: 12px; font-weight: 600; }
+  [data-ui] .u.l { background: #fff; border: 1px solid #C9CED6; }
+  [data-ui] .u.r { background: #2F4BE0; color: #fff; }
+  [data-ui] .u.v { background: #556070; color: #fff; }
+
+  @media (max-width: 900px) {
+    [data-ui] .app { grid-template-columns: 1fr; min-height: 0; }
+    [data-ui] .app-lateral { display: none; }
+    [data-ui] .app-telas { padding: 14px; }
+    [data-ui] .duas { grid-template-columns: 1fr; }
+    [data-ui] .kpis { grid-template-columns: 1fr 1fr; }
+    [data-ui] .kpis-baixo { grid-template-columns: 1fr; }
+    [data-ui] .tabela th:nth-child(2), [data-ui] .tabela td:nth-child(2) { display: none; }
+  }
+  @media (max-width: 560px) {
+    .tour-abas { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--margem) * -1); padding-inline: var(--margem); scrollbar-width: none; }
+    .tour-abas button { flex: none; }
+    [data-ui] .tabela th:nth-child(3), [data-ui] .tabela td:nth-child(3) { display: none; }
+    [data-ui] #tela-compras .tabela th:nth-child(4), [data-ui] #tela-compras .tabela td:nth-child(4), [data-ui] #tela-compras .tabela th:nth-child(5), [data-ui] #tela-compras .tabela td:nth-child(5) { display: none; }
+  }
+</style>

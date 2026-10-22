@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Demonstracao from '../components/Demonstracao.astro';
+import Plataforma from '../components/Plataforma.astro';
 import { getCollection } from 'astro:content';
 import { MODULOS, PERFIS, FAQ, FOTOS, foto } from '../config';
 
@@ -74,6 +75,17 @@ const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', ye
           <p>Com o Leo, a equipe de campo continua usando o WhatsApp e as informações chegam organizadas ao sistema.</p>
         </article>
       </div>
+    </div>
+  </section>
+
+  <!-- Plataforma por dentro -->
+  <section class="por-dentro" id="plataforma">
+    <div class="recorte">
+      <div class="cabeca-secao centro-bloco">
+        <h2 data-reveal>Conheça a plataforma por dentro.</h2>
+        <p data-reveal>Escolha uma área e veja como a Incorion organiza o dia a dia da incorporadora.</p>
+      </div>
+      <Plataforma />
     </div>
   </section>
 
@@ -266,8 +278,12 @@ const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', ye
   .porque h3 { margin-top: 24px; }
   .porque p { margin-top: 10px; color: var(--grafite); }
 
+  /* Plataforma por dentro */
+  .por-dentro { background: var(--concreto); }
+  .centro-bloco { margin-inline: auto; text-align: center; }
+
   /* Perfis */
-  .perfis { background: var(--branco); padding-top: 0; }
+  .perfis { background: var(--branco); }
   .perfis-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .perfil { display: flex; flex-direction: column; text-decoration: none; border-radius: 16px; overflow: hidden; background: var(--noite); color: var(--branco); transition: transform var(--mov); }
   .perfil:hover { transform: translateY(-4px); }
