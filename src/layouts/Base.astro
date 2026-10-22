@@ -44,6 +44,7 @@ const aqui = caminho;
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap"
     />
+    <script is:inline>document.documentElement.classList.add('js')</script>
     <slot name="head" />
   </head>
   <body>
@@ -68,22 +69,28 @@ const aqui = caminho;
       <slot />
     </main>
 
-    <footer class="rodape">
-      <div class="recorte">
-        <p class="rodape-frase">{SITE.slogan}</p>
-        <div class="rodape-linhas">
+    <footer class="rodape" id="contato">
+      <div class="recorte rodape-caixa">
+        <div class="rodape-topo">
+          <img class="rodape-marca" src="/marca/incorion-logo-horizontal-transparente-para-fundo-escuro.svg" alt="Incorion" width="662" height="216" loading="lazy" />
+          <p>Gestão para incorporadoras e construtoras, do terreno às chaves.</p>
+          <p>Fale com a gente por e-mail.</p>
+          <a class="rodape-subir" href="#conteudo">Voltar ao topo</a>
+        </div>
+        <a class="rodape-email" href={`mailto:${SITE.email}`}><span>contato</span><span>@incorion.com.br</span></a>
+        <div class="rodape-meta">
           <ul>
             <li><a href="/#plataforma">Plataforma</a></li>
             <li><a href="/#leo">Leo</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="/#lista-de-espera">Lista de espera</a></li>
           </ul>
-          <p><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+          <p>© {new Date().getFullYear()} Incorion</p>
+          <p>Brasil</p>
         </div>
-        <img class="rodape-nome" src="/marca/incorion-logo-monocromatico-branco.svg" alt="" width="662" height="216" loading="lazy" />
-        <p class="rodape-direitos">© {new Date().getFullYear()} Incorion. Todos os direitos reservados.</p>
       </div>
     </footer>
+    <script is:inline src="/js/movimento.js" defer></script>
   </body>
 </html>
 
@@ -91,7 +98,7 @@ const aqui = caminho;
   .pular { position: absolute; left: 16px; top: -60px; z-index: 10; background: var(--branco); color: var(--noite); padding: 12px 16px; }
   .pular:focus { top: 12px; }
 
-  .topo { background: var(--noite); color: var(--branco); position: sticky; top: 0; z-index: 5; }
+  .topo { background: var(--noite); color: var(--branco); position: relative; z-index: 5; }
   .barra { display: flex; align-items: center; gap: 32px; min-height: 76px; }
   .marca img { width: 132px; }
   nav { margin-left: auto; }
@@ -108,12 +115,25 @@ const aqui = caminho;
     .topo .botao { display: none; }
   }
 
-  .rodape { background: var(--noite); color: var(--branco); padding-block: 96px 32px; }
-  .rodape-frase { font-family: var(--f-titulo); font-weight: 600; font-size: clamp(1.5rem, 0.9rem + 2.6vw, 4rem); letter-spacing: -0.03em; line-height: 1.02; max-width: none; }
-  .rodape-linhas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; margin-top: 56px; color: var(--suave-escuro); }
-  .rodape-linhas ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 12px 28px; }
-  .rodape-linhas a { text-decoration: none; transition: color var(--mov); }
-  .rodape-linhas a:hover { color: var(--branco); }
-  .rodape-nome { width: 100%; margin-top: 96px; opacity: .96; }
-  .rodape-direitos { margin-top: 24px; font-size: var(--t-pequeno); color: var(--suave-escuro); }
+  .rodape { background: var(--noite); color: var(--branco); }
+  .rodape-caixa { min-height: 90svh; display: flex; flex-direction: column; padding-block: 40px 28px; }
+  .rodape-topo { display: grid; grid-template-columns: auto 1fr 1fr auto; gap: 24px 40px; align-items: start; font-size: var(--t-pequeno); }
+  .rodape-marca { width: 112px; }
+  .rodape-topo a, .rodape-meta a { text-decoration: none; transition: color var(--mov); }
+  .rodape-subir:hover, .rodape-meta a:hover { color: var(--leo); }
+  .rodape-email {
+    margin-top: auto; display: flex; flex-wrap: wrap; text-decoration: none;
+    font-family: var(--f-titulo); font-weight: 700; letter-spacing: -0.05em; line-height: .95;
+    font-size: var(--t-hero); transition: color var(--mov);
+  }
+  .rodape-email:hover { color: var(--cobalto); }
+  .rodape-meta { margin-top: 40px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px 24px; font-size: var(--t-pequeno); }
+  .rodape-meta ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .rodape-meta p:last-child { text-align: right; }
+  @media (max-width: 720px) {
+    .rodape-topo { grid-template-columns: 1fr; }
+    .rodape-email { font-size: 12.5vw; flex-direction: column; }
+    .rodape-meta { grid-template-columns: 1fr; }
+    .rodape-meta p:last-child { text-align: left; }
+  }
 </style>

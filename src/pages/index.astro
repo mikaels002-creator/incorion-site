@@ -1,115 +1,650 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE, MODULOS } from '../config';
+import { SITE, MODULOS, MODULO_CORRETORES } from '../config';
 
-const assunto = encodeURIComponent('Lista de espera Incorion');
-const corpo = encodeURIComponent(
-  'Olá! Quero entrar na lista de espera da Incorion.\n\nNome:\nEmpresa:\nCargo:\nWhatsApp:\nCidade:\nObras em andamento:\n'
-);
-const listaDeEspera = `mailto:${SITE.email}?subject=${assunto}&body=${corpo}`;
+// Espelho de vendas ILUSTRATIVO: Residencial Aurora, Torre A, 8 andares x 4 unidades.
+const vendidas = ['801','803','704','804','604','601','603','503','502','401','404','402','304','303','204','202','201','104','101'];
+const reservadas = ['802','703','504','301'];
+const unidades = [];
+for (let andar = 8; andar >= 1; andar--) {
+  for (let final = 1; final <= 4; final++) {
+    const id = `${andar}0${final}`;
+    const canto = final === 1 || final === 4;
+    const area = canto ? 92 : 74;
+    const preco = (canto ? 742000 : 598000) + andar * 14000;
+    const status = vendidas.includes(id) ? 'vendida' : reservadas.includes(id) ? 'reservada' : 'livre';
+    unidades.push({ id, area, preco, status });
+  }
+}
+const brl = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+const livres = unidades.filter((u) => u.status === 'livre');
+const valorLivre = livres.reduce((s, u) => s + u.preco, 0);
+const primeiraLivre = livres.find((u) => u.id === '702') ? '702' : livres[0].id;
+
+const pastas = [
+  { href: '#leo', nome: 'O Leo', cor: 'var(--leo)', ink: 'var(--noite)', aba: '62%' },
+  { href: '#plataforma', nome: 'Módulos', cor: 'var(--branco)', ink: 'var(--noite)', aba: '10%' },
+  { href: '#um-boleto', nome: 'Um boleto', cor: 'var(--cobalto-texto)', ink: 'var(--branco)', aba: '76%' },
+  { href: '#estoque', nome: 'O estoque', cor: 'var(--concreto)', ink: 'var(--noite)', aba: '30%' },
+];
 ---
 <Base>
-  <section class="hero">
-    <div class="recorte hero-grade">
-      <div class="hero-texto">
-        <h1>A incorporação inteira, em uma plataforma.</h1>
-        <p>Do terreno às chaves, no mesmo sistema. Com o Leo, a IA que trabalha no WhatsApp da sua incorporadora.</p>
-        <a class="botao" href="#lista-de-espera">Entrar na lista de espera</a>
+  <section class="hero" aria-labelledby="hero-titulo">
+    <div class="hero-texto">
+      <h1 id="hero-titulo">Do terreno às chaves.</h1>
+      <p>A incorporação inteira em uma plataforma. Com o Leo, a IA que trabalha no WhatsApp da sua incorporadora.</p>
+    </div>
+    <nav class="pastas" aria-label="Capítulos da página">
+      {pastas.map((p, i) => (
+        <a class="pasta" href={p.href} style={`--cor:${p.cor};--ink:${p.ink};--aba:${p.aba};--i:${i}`}>
+          <span class="aba">{p.nome}</span>
+        </a>
+      ))}
+      <div class="pasta frente" style="--cor:var(--cobalto-texto);--ink:var(--branco);--aba:44%;--i:4">
+        <a class="aba" href="#lista-de-espera">Lista de espera</a>
+        <a class="botao claro" href="#lista-de-espera">Entrar na lista de espera</a>
       </div>
-      <svg class="torre" viewBox="26 22 60 86" role="img" aria-labelledby="torre-titulo">
-        <title id="torre-titulo">Símbolo da Incorion: uma torre de quatro lajes; a do topo, laranja, é o Leo.</title>
-        <polygon class="laje l4" points="38,92 82,92 74,104 30,104" />
-        <polygon class="laje l3" points="44,70 78,70 70,82 36,82" />
-        <polygon class="laje l2" points="50,48 74,48 66,60 42,60" />
-        <polygon class="laje l1" points="56,26 70,26 62,38 48,38" />
-      </svg>
+    </nav>
+  </section>
+
+  <section class="virada" aria-labelledby="virada-titulo">
+    <div class="painel painel-hoje">
+      <h2 id="virada-titulo">Do caos ao controle.</h2>
+      <div class="objeto" data-reveal>
+        <div class="planilha" data-ui>
+          <div class="planilha-nome">CONTAS OBRA v7 FINAL (2).xlsx</div>
+          <table>
+            <tr><th></th><th>A</th><th>B</th><th>C</th></tr>
+            <tr><td>1</td><td>Fornecedor</td><td>Valor</td><td>Pago?</td></tr>
+            <tr><td>2</td><td>Concreteira</td><td>18.400</td><td>ver no banco</td></tr>
+            <tr><td>3</td><td>Aço CA-50</td><td>#REF!</td><td>?</td></tr>
+            <tr><td>4</td><td>Locação andaime</td><td>3.250</td><td>sim (acho)</td></tr>
+            <tr><td>5</td><td>Elétrica 2º pav</td><td>9.870</td><td>falta NF</td></tr>
+            <tr><td>6</td><td>Boleto do grupo</td><td>—</td><td>quem mandou?</td></tr>
+            <tr><td>7</td><td>Hidráulica</td><td>12.300</td><td></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="rodape-painel">
+        <p><strong>Hoje</strong></p>
+        <p>Planilha, grupo de WhatsApp e boleto perdido no e-mail.</p>
+      </div>
+    </div>
+    <div class="painel painel-depois">
+      <div class="objeto" data-reveal>
+        <div class="lista-contas" data-ui>
+          <div class="lc-topo"><span>Contas a pagar</span><span>Residencial Aurora</span></div>
+          <div class="lc-linha"><span>Concreteira Vale Forte</span><span>R$ 18.400</span><span class="chip pago">Pago</span></div>
+          <div class="lc-linha"><span>Aço CA-50 · 2,4 t</span><span>R$ 16.368</span><span class="chip aprovar">Aprovar</span></div>
+          <div class="lc-linha"><span>Locação de andaime</span><span>R$ 3.250</span><span class="chip pago">Pago</span></div>
+          <div class="lc-linha"><span>Elétrica · 2º pavimento</span><span>R$ 9.870</span><span class="chip nf">Nota anexada</span></div>
+          <div class="lc-linha"><span>Hidráulica · prumadas</span><span>R$ 12.300</span><span class="chip agendado">28/10</span></div>
+          <div class="lc-total"><span>Total do mês</span><span>R$ 60.188</span></div>
+        </div>
+      </div>
+      <div class="rodape-painel">
+        <p><strong>Na Incorion</strong></p>
+        <p>Tudo lançado, aprovado e conferido com o extrato, no mesmo lugar.</p>
+      </div>
     </div>
   </section>
 
-  <section class="plataforma" id="plataforma">
+  <section class="passos" id="um-boleto" aria-labelledby="passos-titulo">
+    <div class="passo p1">
+      <h2 id="passos-titulo">Um boleto, quatro passos.</h2>
+      <div class="cartao-pos" data-reveal>
+        <div class="cartao" data-ui>
+          <div class="msg">
+            <span class="quem">Mestre de obras · grupo Obra Aurora</span>
+            <span class="anexo">boleto-concreteira.pdf</span>
+            <span>Chegou o boleto da concretagem da 6ª laje.</span>
+            <span class="hora">09:12</span>
+          </div>
+        </div>
+      </div>
+      <p class="clausula">Primeiro ele chega no grupo da obra.</p>
+    </div>
+    <div class="passo p2">
+      <div class="cartao-pos" data-reveal>
+        <div class="cartao" data-ui>
+          <dl class="campos">
+            <div><dt>Fornecedor</dt><dd>Concreteira Vale Forte</dd></div>
+            <div><dt>Valor</dt><dd>R$ 18.400,00</dd></div>
+            <div><dt>Vencimento</dt><dd>28/10/2026</dd></div>
+            <div><dt>Obra</dt><dd>Residencial Aurora</dd></div>
+            <div><dt>Etapa</dt><dd>Estrutura</dd></div>
+          </dl>
+          <span class="selo leo-selo">Lido pelo Leo</span>
+        </div>
+      </div>
+      <p class="clausula">Depois o Leo lê e lança sozinho.</p>
+    </div>
+    <div class="passo p3">
+      <div class="cartao-pos" data-reveal>
+        <div class="cartao" data-ui>
+          <div class="msg leo">
+            <span class="quem">Leo</span>
+            <span>3 contas para pagar hoje, total R$ 37.770. Autoriza?</span>
+            <span class="resposta">Sim, pode pagar.</span>
+          </div>
+        </div>
+      </div>
+      <p class="clausula">Então você aprova pelo WhatsApp.</p>
+    </div>
+    <div class="passo p4">
+      <div class="cartao-pos" data-reveal>
+        <div class="cartao" data-ui>
+          <dl class="campos">
+            <div><dt>Concreteira Vale Forte</dt><dd>R$ 18.400,00</dd></div>
+            <div><dt>Situação</dt><dd>Paga em 28/10</dd></div>
+            <div><dt>Extrato</dt><dd>Conferido</dd></div>
+            <div><dt>Comprovante</dt><dd>Anexado</dd></div>
+          </dl>
+          <span class="selo">Baixa feita</span>
+        </div>
+      </div>
+      <p class="clausula">Por fim, a conta é baixada sozinha.</p>
+    </div>
+  </section>
+
+  <section class="estoque" id="estoque" aria-labelledby="estoque-titulo">
+    <div class="estoque-palco">
+      <div class="espelho" data-ui id="espelho" data-filtro="todas">
+        <div class="esp-topo">
+          <span>Residencial Aurora · Torre A</span>
+          <span class="esp-legenda"><i class="l-livre"></i>Livre <i class="l-reservada"></i>Reservada <i class="l-vendida"></i>Vendida</span>
+        </div>
+        <div class="esp-grade">
+          {unidades.map((u) => (
+            <button type="button" class={`un ${u.status}`} data-id={u.id} data-area={u.area} data-preco={u.preco} data-status={u.status} aria-label={`Unidade ${u.id}, ${u.status}`}>
+              <span class="un-num">{u.id}</span>
+              <span class="un-preco">{u.status === 'vendida' ? 'Vendida' : brl(u.preco)}</span>
+            </button>
+          ))}
+        </div>
+        <div class="esp-info" aria-live="polite">
+          <span id="esp-detalhe">Toque numa unidade para ver os detalhes.</span>
+          <span>Estoque livre: <strong id="esp-valor">{brl(valorLivre)}</strong></span>
+        </div>
+        <div class="esp-leo" id="esp-leo" hidden>
+          <span class="quem">Leo</span>
+          <span id="esp-leo-texto"></span>
+        </div>
+      </div>
+    </div>
+    <div class="estoque-texto">
+      <h2 id="estoque-titulo">O estoque, ao vivo.</h2>
+      <div class="bloco">
+        <p class="frase-bloco">Veja cada unidade como ela está agora.</p>
+        <p>O espelho de vendas se atualiza a cada venda e a cada reserva. Sem planilha mandada por e-mail.</p>
+        <div class="segmentado" role="group" aria-label="Filtrar unidades">
+          <button type="button" data-filtro="todas" aria-pressed="true">Todas</button>
+          <button type="button" data-filtro="livre" aria-pressed="false">Livres</button>
+          <button type="button" data-filtro="reservada" aria-pressed="false">Reservadas</button>
+          <button type="button" data-filtro="vendida" aria-pressed="false">Vendidas</button>
+        </div>
+      </div>
+      <div class="bloco">
+        <p class="frase-bloco">Reajuste a tabela de uma vez.</p>
+        <p>Mude o percentual e todas as unidades livres ganham o preço novo, na mesma hora.</p>
+        <label class="controle-rotulo" for="reajuste">Reajuste da tabela: <strong id="reajuste-valor">0%</strong></label>
+        <input type="range" id="reajuste" min="0" max="10" step="0.5" value="0" />
+      </div>
+      <div class="bloco">
+        <p class="frase-bloco">O corretor parceiro reserva pelo celular.</p>
+        <p>No {MODULO_CORRETORES}, cada corretor vê só o que está livre e reserva por 48 horas.</p>
+        <form class="reserva" id="form-reserva">
+          <label class="controle-rotulo" for="corretor">Nome do corretor</label>
+          <div class="reserva-linha">
+            <input type="text" id="corretor" value="Ana Paula" autocomplete="off" />
+            <button type="submit" class="botao" id="btn-reserva">Reservar a {primeiraLivre}</button>
+          </div>
+        </form>
+      </div>
+      <div class="bloco">
+        <p class="frase-bloco">O Leo avisa a equipe na hora.</p>
+        <p>Cada reserva e cada venda chegam no WhatsApp de quem precisa saber.</p>
+        <button type="button" class="chave" role="switch" aria-checked="false" id="avisar">
+          <span class="chave-trilho"><span class="chave-bola"></span></span>
+          <span>Avisar no WhatsApp</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="cap-leo" id="leo" aria-labelledby="leo-titulo">
+    <div class="leo-texto">
+      <h2 id="leo-titulo">O Leo está <span id="leo-palavra">de olho</span>.</h2>
+      <p>Uma IA feita para o mercado imobiliário. Ele lê os grupos de WhatsApp da obra, lança as contas, cobra os prazos e avisa antes do problema chegar. Módulo à parte, contratado junto com a plataforma.</p>
+    </div>
+    <div class="leo-palco">
+      <button type="button" class="leo-chave" data-ui role="switch" aria-checked="true" id="leo-chave" aria-label="Ligar ou desligar o Leo">
+        <span class="lc-rotulo">Leo</span>
+        <span class="lc-trilho"><span class="lc-bola"></span></span>
+        <span class="lc-estado" id="leo-estado">Ligado</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="modulos" id="plataforma" aria-labelledby="modulos-titulo">
     <div class="recorte">
-      <h2>Cada etapa da obra tem o seu módulo.</h2>
-      <p class="frase">Você começa pelo que mais dói hoje e liga os outros quando quiser. Tudo conversa entre si.</p>
-      <ul class="modulos">
-        {MODULOS.map((m) => (
-          <li>
-            <h3>{m.nome}</h3>
-            <p>{m.texto}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <section class="leo" id="leo">
-    <div class="recorte leo-grade">
-      <img src="/marca/leo-avatar.svg" alt="" width="512" height="512" loading="lazy" />
-      <div>
-        <h2>O Leo é a laje do topo.</h2>
-        <p class="frase">Uma IA feita para o mercado imobiliário. Ele lê as mensagens dos grupos de WhatsApp, lança as contas, cobra os prazos e te avisa antes do problema chegar.</p>
-        <p>Módulo à parte, contratado junto com a plataforma.</p>
+      <h2 id="modulos-titulo">Cada etapa, um módulo.</h2>
+      <p class="modulos-frase">Comece pelo que mais dói hoje e ligue os outros quando quiser. Tudo conversa entre si.</p>
+      <div class="indice">
+        <ul class="indice-lista">
+          {MODULOS.map((m, i) => (
+            <li class="indice-linha" data-i={i} tabindex="0" data-reveal>
+              <span class="indice-nome">{m.nome}</span>
+              <span class="indice-texto">{m.texto}</span>
+              <div class="tela tela-inline" data-ui aria-hidden="true">
+                <span class="tela-titulo">{m.tela}</span>
+                {m.linhas.map(([a, b]) => <span class="tela-linha"><span>{a}</span><strong>{b}</strong></span>)}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div class="indice-quadro" aria-hidden="true">
+          <div class="quadro-fixo">
+            {MODULOS.map((m, i) => (
+              <div class={`tela ${i === 0 ? 'ativa' : ''}`} data-ui data-i={i}>
+                <span class="tela-modulo">{m.nome}</span>
+                <span class="tela-titulo">{m.tela}</span>
+                {m.linhas.map(([a, b]) => <span class="tela-linha"><span>{a}</span><strong>{b}</strong></span>)}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="espera" id="lista-de-espera">
-    <div class="recorte espera-grade">
-      <h2>Lista de espera aberta.</h2>
-      <div>
-        <p class="frase">A Incorion abre em breve para as primeiras incorporadoras. Deixe seu contato e seja avisado antes.</p>
-        <a class="botao claro" href={listaDeEspera}>Quero entrar na lista</a>
-      </div>
+  <section class="espera" id="lista-de-espera" aria-labelledby="espera-titulo">
+    <div class="espera-fecho">
+      <h2 id="espera-titulo">Entre na lista.</h2>
+      <p>A Incorion abre em breve para as primeiras incorporadoras. Quem estiver na lista recebe o convite antes e conversa direto com a gente.</p>
     </div>
+    <form class="dialogo" data-ui id="form-espera" novalidate>
+      <p class="dlg-titulo">Lista de espera da Incorion</p>
+      <div class="dlg-grade">
+        <label>Nome<input name="nome" required autocomplete="name" placeholder="Seu nome" /></label>
+        <label>Empresa<input name="empresa" required autocomplete="organization" placeholder="Nome da incorporadora" /></label>
+        <label>Cargo<input name="cargo" autocomplete="organization-title" placeholder="Diretor, sócio, gerente..." /></label>
+        <label>WhatsApp<input name="whatsapp" required type="tel" autocomplete="tel" placeholder="(47) 99999-0000" /></label>
+        <label>E-mail<input name="email" required type="email" autocomplete="email" placeholder="voce@empresa.com.br" /></label>
+        <label>Cidade<input name="cidade" autocomplete="address-level2" placeholder="Cidade, UF" /></label>
+        <label class="dlg-largo">Obras em andamento<input name="obras" type="number" min="0" inputmode="numeric" placeholder="3" /></label>
+      </div>
+      <fieldset class="dlg-interesse">
+        <legend>O que mais interessa</legend>
+        <label><input type="radio" name="interesse" value="Incorion" checked /><span>A plataforma</span></label>
+        <label><input type="radio" name="interesse" value="Leo" /><span>O Leo</span></label>
+        <label><input type="radio" name="interesse" value="Corretores" /><span>Corretores</span></label>
+      </fieldset>
+      <p class="dlg-erro" id="dlg-erro" hidden>Preencha nome, empresa, WhatsApp e e-mail.</p>
+      <button type="submit" class="dlg-botao">Quero entrar na lista</button>
+    </form>
   </section>
 </Base>
 
+<script is:inline define:vars={{ email: SITE.email }}>
+  const brl = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+
+  // ---- Espelho de vendas (a parte "ao vivo" da página) ----
+  const espelho = document.getElementById('espelho');
+  const unidades = [...espelho.querySelectorAll('.un')];
+  const detalhe = document.getElementById('esp-detalhe');
+  const valor = document.getElementById('esp-valor');
+  const reajuste = document.getElementById('reajuste');
+  const reajusteValor = document.getElementById('reajuste-valor');
+  const leoBox = document.getElementById('esp-leo');
+  const leoTexto = document.getElementById('esp-leo-texto');
+  const avisar = document.getElementById('avisar');
+  let fator = 1;
+  let ultimoAviso = '';
+
+  const precoAtual = (u) => Math.round(Number(u.dataset.preco) * fator / 1000) * 1000;
+  function atualizarPrecos() {
+    let total = 0;
+    unidades.forEach((u) => {
+      if (u.dataset.status === 'vendida') return;
+      const p = precoAtual(u);
+      u.querySelector('.un-preco').textContent = brl(p);
+      if (u.dataset.status === 'livre') total += p;
+    });
+    valor.textContent = brl(total);
+  }
+  function avisarLeo(texto) {
+    ultimoAviso = texto;
+    if (avisar.getAttribute('aria-checked') === 'true') {
+      leoTexto.textContent = texto;
+      leoBox.hidden = false;
+      leoBox.classList.remove('pulso'); void leoBox.offsetWidth; leoBox.classList.add('pulso');
+    }
+  }
+  function mostrar(u) {
+    unidades.forEach((x) => x.classList.toggle('sel', x === u));
+    const extra = u.dataset.corretor ? ` por ${u.dataset.corretor}, vence em 48 h` : '';
+    detalhe.textContent = `Unidade ${u.dataset.id} · ${u.dataset.area} m² · ${u.dataset.status}${extra}` + (u.dataset.status !== 'vendida' ? ` · ${brl(precoAtual(u))}` : '');
+  }
+  unidades.forEach((u) => u.addEventListener('click', () => mostrar(u)));
+
+  document.querySelectorAll('.segmentado button').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('.segmentado button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    espelho.dataset.filtro = b.dataset.filtro;
+  }));
+
+  reajuste.addEventListener('input', () => {
+    fator = 1 + Number(reajuste.value) / 100;
+    reajusteValor.textContent = `${String(reajuste.value).replace('.', ',')}%`;
+    atualizarPrecos();
+    const sel = espelho.querySelector('.un.sel'); if (sel) mostrar(sel);
+  });
+
+  document.getElementById('form-reserva').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nome = (document.getElementById('corretor').value || 'Corretor parceiro').trim();
+    const livre = unidades.find((u) => u.dataset.id === '702' && u.dataset.status === 'livre') || unidades.find((u) => u.dataset.status === 'livre');
+    const btn = document.getElementById('btn-reserva');
+    if (!livre) { btn.textContent = 'Sem unidades livres'; return; }
+    livre.dataset.status = 'reservada'; livre.dataset.corretor = nome;
+    livre.classList.remove('livre'); livre.classList.add('reservada', 'acabou');
+    livre.setAttribute('aria-label', `Unidade ${livre.dataset.id}, reservada`);
+    atualizarPrecos(); mostrar(livre);
+    avisarLeo(`A ${livre.dataset.id} foi reservada por ${nome}. A reserva vence em 48 h.`);
+    const prox = unidades.find((u) => u.dataset.status === 'livre');
+    btn.textContent = prox ? `Reservar a ${prox.dataset.id}` : 'Sem unidades livres';
+  });
+
+  avisar.addEventListener('click', () => {
+    const on = avisar.getAttribute('aria-checked') !== 'true';
+    avisar.setAttribute('aria-checked', String(on));
+    if (on) { avisarLeo(ultimoAviso || 'Avisos ligados. Cada reserva e cada venda da Torre A chegam no grupo Vendas Aurora.'); }
+    else { leoBox.hidden = true; }
+  });
+
+  // ---- Chave do Leo ----
+  const chave = document.getElementById('leo-chave');
+  const secLeo = document.getElementById('leo');
+  chave.addEventListener('click', () => {
+    const on = chave.getAttribute('aria-checked') !== 'true';
+    chave.setAttribute('aria-checked', String(on));
+    secLeo.classList.toggle('desligado', !on);
+    document.getElementById('leo-palavra').textContent = on ? 'de olho' : 'de folga';
+    document.getElementById('leo-estado').textContent = on ? 'Ligado' : 'Desligado';
+  });
+
+  // ---- Índice de módulos com prévia ----
+  const linhas = document.querySelectorAll('.indice-linha');
+  const telas = document.querySelectorAll('.quadro-fixo .tela');
+  const ativar = (i) => telas.forEach((t) => t.classList.toggle('ativa', t.dataset.i === i));
+  linhas.forEach((l) => {
+    l.addEventListener('mouseenter', () => ativar(l.dataset.i));
+    l.addEventListener('focus', () => ativar(l.dataset.i));
+  });
+
+  // ---- Lista de espera (por enquanto abre um e-mail pronto; na etapa 3 grava no sistema) ----
+  const form = document.getElementById('form-espera');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(form));
+    const erro = document.getElementById('dlg-erro');
+    if (!d.nome || !d.empresa || !d.whatsapp || !d.email) { erro.hidden = false; return; }
+    erro.hidden = true;
+    const corpo = `Quero entrar na lista de espera da Incorion.\n\nNome: ${d.nome}\nEmpresa: ${d.empresa}\nCargo: ${d.cargo || ''}\nWhatsApp: ${d.whatsapp}\nE-mail: ${d.email}\nCidade: ${d.cidade || ''}\nObras em andamento: ${d.obras || ''}\nInteresse: ${d.interesse}\n`;
+    location.href = `mailto:${email}?subject=${encodeURIComponent('Lista de espera Incorion: ' + d.empresa)}&body=${encodeURIComponent(corpo)}`;
+  });
+</script>
+
 <style>
-  .hero { background: var(--noite); color: var(--branco); overflow: hidden; }
-  .hero-grade { display: grid; grid-template-columns: 3.2fr 1fr; align-items: center; gap: 48px; min-height: calc(100svh - 76px); padding-block: 48px; }
-  .hero-texto { padding-block: 24px; }
-  .hero h1 { font-size: clamp(2.1rem, 0.6rem + 5.2vw, 5.25rem); text-wrap: wrap; line-height: .95; letter-spacing: -0.045em; }
-  .hero p { margin-top: 32px; max-width: 34em; font-size: var(--t-frase); line-height: 1.35; color: var(--branco); }
-  .hero .botao { margin-top: 40px; }
+  /* ---------- Abertura: a torre de lajes vira uma pilha de pastas ---------- */
+  .hero { background: var(--noite); color: var(--branco); min-height: calc(100svh - 76px); display: flex; flex-direction: column; overflow: hidden; }
+  .hero-texto { text-align: center; padding: clamp(48px, 9vh, 104px) var(--margem) 0; }
+  .hero h1 { font-size: var(--t-hero); line-height: .92; letter-spacing: -0.05em; font-weight: 700; }
+  .hero-texto p { margin: 28px auto 0; max-width: 40ch; font-size: var(--t-lead); line-height: 1.45; }
 
-  .torre { width: 100%; max-height: 72svh; }
-  .laje { fill: var(--cobalto); }
-  .laje.l1 { fill: var(--leo); }
-
+  .pastas { position: relative; flex: 1; min-height: 46svh; margin-top: clamp(40px, 7vh, 80px); width: min(86vw, 1360px); margin-inline: auto; }
+  .pasta { position: absolute; left: 0; right: 0; top: calc(var(--i) * 64px + 40px); bottom: -2px; background: var(--cor); color: var(--ink); text-decoration: none; }
+  .aba {
+    position: absolute; top: -40px; left: var(--aba); height: 40px; padding: 0 34px;
+    display: inline-flex; align-items: center; background: var(--cor); color: var(--ink);
+    font: 600 var(--t-texto)/1 var(--f-texto); white-space: nowrap; text-decoration: none;
+    clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+  }
+  .pasta:not(.frente) { transition: transform var(--mov); }
+  .pasta:not(.frente):hover { transform: translateY(-8px); }
+  .frente .botao { position: absolute; top: 32px; left: 32px; }
   @media (prefers-reduced-motion: no-preference) {
-    .laje { animation: subir 900ms cubic-bezier(.2, .7, .2, 1) both; }
-    .l4 { animation-delay: 80ms; }
-    .l3 { animation-delay: 200ms; }
-    .l2 { animation-delay: 320ms; }
-    .l1 { animation-delay: 520ms; }
-    @keyframes subir { from { opacity: 0; transform: translateY(14px); } }
+    .pasta { animation: pasta-sobe 800ms cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i) * 90ms + 150ms); }
+    .hero-texto { animation: aparece 700ms cubic-bezier(.2, .7, .2, 1) both; }
+    @keyframes pasta-sobe { from { transform: translateY(120px); } }
+    @keyframes aparece { from { opacity: 0; transform: translateY(16px); } }
   }
 
-  .plataforma { padding-block: var(--secao); }
-  .plataforma h2, .espera h2, .leo h2 { font-size: var(--t-h2); max-width: 16ch; }
-  .frase { margin-top: 24px; font-size: var(--t-frase); line-height: 1.35; max-width: 30em; }
-  .modulos { list-style: none; margin: 96px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px 48px; }
-  .modulos h3 { font-size: var(--t-h3); letter-spacing: -0.02em; }
-  .modulos p { margin-top: 10px; color: var(--grafite); }
+  /* ---------- Do caos ao controle: dois objetos, dois campos ---------- */
+  .virada { display: grid; grid-template-columns: 1fr 1fr; }
+  .painel { position: relative; min-height: 92svh; overflow: hidden; padding: 40px var(--margem); display: flex; flex-direction: column; }
+  .painel-hoje { background: var(--concreto); color: var(--noite); }
+  .painel-depois { background: var(--cobalto-texto); color: var(--branco); }
+  .virada h2 { font-size: var(--t-h2); max-width: 10ch; position: relative; z-index: 2; }
+  .objeto { position: absolute; top: 26%; left: 12%; }
+  .painel-depois .objeto { top: 14%; left: 8%; }
+  .rodape-painel { margin-top: auto; position: relative; z-index: 2; max-width: 30ch; }
+  .rodape-painel p { font-size: var(--t-lead); line-height: 1.35; }
+  .rodape-painel strong { font-weight: 600; }
 
-  .leo { background: var(--concreto); padding-block: var(--secao); }
-  .leo-grade { display: grid; grid-template-columns: minmax(200px, 1fr) 2fr; gap: 64px; align-items: center; }
-  .leo img { width: 100%; max-width: 360px; }
-  .leo p:last-child { margin-top: 24px; color: var(--grafite); }
+  [data-ui].planilha { background: #fff; font: 14px/1.2 var(--f-texto); color: #222; border: 1px solid #c9ced6; width: 640px; transform: rotate(-3deg) scale(1.15); transform-origin: top left; }
+  [data-ui] .planilha-nome { background: #217346; color: #fff; padding: 10px 14px; font-weight: 600; font-size: 14px; }
+  [data-ui] table { border-collapse: collapse; width: 100%; }
+  [data-ui] th, [data-ui] td { border: 1px solid #d9dde3; padding: 9px 10px; text-align: left; font-weight: 400; font-size: 14px; }
+  [data-ui] th, [data-ui] td:first-child { background: #f1f3f5; color: #667; width: 34px; text-align: center; }
+  [data-ui] tr:nth-child(4) td:nth-child(3) { color: #c00; font-weight: 700; }
+  [data-ui] tr:nth-child(7) td { background: #fff3a3; }
 
-  .espera { background: var(--cobalto-texto); color: var(--branco); padding-block: var(--secao); }
-  .espera-grade { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: end; }
-  .espera .frase { margin-top: 0; }
-  .espera .botao { margin-top: 32px; }
+  [data-ui].lista-contas { background: #fff; color: #0E1A33; width: 600px; border-radius: 10px; padding: 8px 0; font: 15px/1.3 var(--f-texto); transform: scale(1.15); transform-origin: top left; }
+  [data-ui] .lc-topo { display: flex; justify-content: space-between; padding: 14px 20px; font-weight: 600; color: #556070; font-size: 14px; }
+  [data-ui] .lc-linha { display: grid; grid-template-columns: 1fr auto 120px; gap: 16px; align-items: center; padding: 14px 20px; border-top: 1px solid #EEF0F3; }
+  [data-ui] .lc-linha span:nth-child(2) { font-variant-numeric: tabular-nums; font-weight: 600; }
+  [data-ui] .chip { justify-self: end; font-size: 13px; font-weight: 600; padding: 5px 10px; border-radius: 99px; }
+  [data-ui] .chip.pago { background: #E3F6EA; color: #17663A; }
+  [data-ui] .chip.aprovar { background: #FFE9DC; color: #A8380A; }
+  [data-ui] .chip.nf { background: #E6EBFF; color: #2F4BE0; }
+  [data-ui] .chip.agendado { background: #EEF0F3; color: #556070; }
+  [data-ui] .lc-total { display: flex; justify-content: space-between; padding: 16px 20px 10px; border-top: 2px solid #0E1A33; font-weight: 700; }
 
-  @media (max-width: 900px) {
-    .hero-grade { grid-template-columns: 1fr; min-height: auto; padding-top: 48px; gap: 0; }
-    .hero-texto { padding-bottom: 48px; }
-    .torre { max-width: 70%; justify-self: end; max-height: none; }
-    .modulos { grid-template-columns: 1fr 1fr; margin-top: 64px; }
-    .leo-grade, .espera-grade { grid-template-columns: 1fr; gap: 40px; }
-    .leo img { max-width: 200px; }
+  /* ---------- Um boleto, quatro passos ---------- */
+  .passos { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .passo { min-height: 84svh; padding: 40px 28px 32px; display: flex; flex-direction: column; position: relative; }
+  .p1 { background: var(--cobalto-texto); color: var(--branco); }
+  .p2 { background: var(--noite); color: var(--branco); }
+  .p3 { background: var(--concreto); color: var(--noite); }
+  .p4 { background: var(--branco); color: var(--noite); }
+  .passos h2 { font-size: var(--t-frase); font-weight: 700; max-width: 11ch; }
+  .cartao-pos { position: absolute; top: 34%; left: 50%; width: 270px; margin-left: -135px; }
+  .cartao { transition: transform 150ms ease; }
+  .passo:hover .cartao { transform: translateY(-6px); }
+  .clausula { margin-top: auto; font-family: var(--f-titulo); font-weight: 600; font-size: var(--t-frase); line-height: 1.08; letter-spacing: -0.02em; max-width: 12ch; }
+
+  [data-ui].cartao { background: #fff; color: #0E1A33; border-radius: 10px; padding: 16px; font: 14px/1.35 var(--f-texto); }
+  [data-ui] .msg { display: flex; flex-direction: column; gap: 8px; }
+  [data-ui] .msg .quem { font-weight: 700; font-size: 14px; color: #17663A; }
+  [data-ui] .msg.leo .quem { color: #C2410C; }
+  [data-ui] .msg .anexo { background: #EEF0F3; border-radius: 6px; padding: 10px; font-weight: 600; }
+  [data-ui] .msg .hora { align-self: flex-end; font-size: 13px; color: #556070; }
+  [data-ui] .msg .resposta { align-self: flex-end; background: #DCF8C6; border-radius: 8px; padding: 8px 10px; }
+  [data-ui] .campos { margin: 0; display: grid; gap: 8px; }
+  [data-ui] .campos div { display: flex; justify-content: space-between; gap: 12px; }
+  [data-ui] .campos dt { color: #556070; }
+  [data-ui] .campos dd { margin: 0; font-weight: 600; text-align: right; }
+  [data-ui] .selo { display: inline-block; margin-top: 12px; font-size: 13px; font-weight: 600; padding: 5px 10px; border-radius: 99px; background: #E3F6EA; color: #17663A; }
+  [data-ui] .selo.leo-selo { background: #FFE9DC; color: #A8380A; }
+
+  /* ---------- O estoque, ao vivo ---------- */
+  .estoque { display: grid; grid-template-columns: 1fr 1fr; background: var(--concreto); color: var(--noite); align-items: start; }
+  .estoque-palco { position: sticky; top: 76px; height: calc(100svh - 76px); background: var(--noite); display: grid; place-items: center; padding: 24px; }
+  .estoque-texto { padding: 72px var(--margem) 120px clamp(32px, 6vw, 96px); }
+  .estoque h2 { font-size: var(--t-h2); }
+  .bloco { min-height: 50vh; padding-top: 72px; max-width: 44ch; }
+  .frase-bloco { font-family: var(--f-titulo); font-weight: 600; font-size: var(--t-frase); line-height: 1.1; letter-spacing: -0.02em; }
+  .bloco p + p { margin-top: 14px; }
+  .controle-rotulo { display: block; margin-top: 28px; font-weight: 500; }
+
+  .segmentado { display: inline-flex; margin-top: 28px; background: var(--branco); padding: 4px; flex-wrap: wrap; }
+  .segmentado button { font: 500 var(--t-texto)/1 var(--f-texto); padding: 13px 16px; border: 0; background: transparent; color: var(--noite); cursor: pointer; min-height: 44px; transition: background-color var(--mov), color var(--mov); }
+  .segmentado button[aria-pressed='true'] { background: var(--noite); color: var(--branco); }
+  .segmentado button:hover:not([aria-pressed='true']) { background: var(--concreto); }
+  input[type='range'] { width: 100%; margin-top: 16px; accent-color: var(--cobalto-texto); height: 44px; }
+  .reserva-linha { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .reserva input { flex: 1; min-width: 160px; min-height: 52px; padding: 0 14px; font: var(--t-texto) var(--f-texto); border: 0; background: var(--branco); color: var(--noite); }
+  .chave { display: inline-flex; align-items: center; gap: 14px; margin-top: 28px; background: none; border: 0; padding: 0; font: 500 var(--t-texto) var(--f-texto); color: var(--noite); cursor: pointer; min-height: 44px; }
+  .chave-trilho { width: 56px; height: 32px; background: var(--grafite); position: relative; transition: background-color var(--mov); border-radius: 99px; }
+  .chave-bola { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; background: var(--branco); border-radius: 50%; transition: transform var(--mov); }
+  .chave[aria-checked='true'] .chave-trilho { background: var(--cobalto-texto); }
+  .chave[aria-checked='true'] .chave-bola { transform: translateX(24px); }
+
+  [data-ui].espelho { width: min(460px, 100%); background: #16233F; color: #EEF0F3; border-radius: 12px; padding: 18px; font: 14px/1.3 var(--f-texto); }
+  [data-ui] .esp-topo { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; font-weight: 600; }
+  [data-ui] .esp-legenda { font-weight: 400; font-size: 13px; color: #B9C2D3; display: flex; align-items: center; gap: 6px; }
+  [data-ui] .esp-legenda i { width: 10px; height: 10px; display: inline-block; border-radius: 2px; margin-left: 6px; }
+  [data-ui] .l-livre { background: #FFFFFF; } [data-ui] .l-reservada { background: #2F4BE0; } [data-ui] .l-vendida { background: #556070; }
+  [data-ui] .esp-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  [data-ui] .un { border: 0; border-radius: 6px; padding: 8px 6px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 2px; font: inherit; transition: opacity 200ms ease, transform 150ms ease, outline-color 150ms ease; outline: 2px solid transparent; outline-offset: 1px; }
+  [data-ui] .un:hover { transform: translateY(-2px); }
+  [data-ui] .un.livre { background: #FFFFFF; color: #0E1A33; }
+  [data-ui] .un.reservada { background: #2F4BE0; color: #FFFFFF; }
+  [data-ui] .un.vendida { background: #556070; color: #D7DCE4; }
+  [data-ui] .un.sel { outline-color: #FF6B1A; }
+  [data-ui] .un-num { font-weight: 700; font-size: 14px; }
+  [data-ui] .un-preco { font-size: 13px; font-variant-numeric: tabular-nums; }
+  [data-ui][data-filtro='livre'] .un:not(.livre),
+  [data-ui][data-filtro='reservada'] .un:not(.reservada),
+  [data-ui][data-filtro='vendida'] .un:not(.vendida) { opacity: .15; }
+  [data-ui] .un.acabou { animation: reservou 700ms ease; }
+  @keyframes reservou { 30% { transform: scale(1.12); } }
+  [data-ui] .esp-info { margin-top: 14px; display: flex; flex-direction: column; gap: 4px; color: #B9C2D3; min-height: 40px; }
+  [data-ui] .esp-info strong { color: #fff; }
+  [data-ui] .esp-leo { margin-top: 12px; background: #fff; color: #0E1A33; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+  [data-ui] .esp-leo[hidden] { display: none; }
+  [data-ui] .esp-leo .quem { color: #C2410C; font-weight: 700; font-size: 13px; }
+  [data-ui] .esp-leo.pulso { animation: aviso 500ms cubic-bezier(.2, .7, .2, 1); }
+  @keyframes aviso { from { opacity: 0; transform: translateY(8px); } }
+
+  /* ---------- O Leo: uma chave enorme ---------- */
+  .cap-leo { position: relative; min-height: 92svh; overflow: hidden; background: var(--leo); color: var(--noite); padding: 56px var(--margem); transition: background-color 400ms ease, color 400ms ease; }
+  .cap-leo.desligado { background: var(--noite); color: var(--branco); }
+  .leo-texto { position: relative; z-index: 2; max-width: 34em; }
+  .cap-leo h2 { font-size: var(--t-h2); }
+  .leo-texto p { margin-top: 20px; font-size: var(--t-lead); max-width: 34em; }
+  .leo-palco { position: absolute; right: -6vw; bottom: -10vh; font-size: clamp(42px, 9vw, 140px); }
+  [data-ui].leo-chave { display: flex; align-items: center; gap: .5em; background: #FFFFFF; color: #0E1A33; border: 0; border-radius: 1em; padding: .45em .6em .45em .7em; font: 700 1em/1 var(--f-titulo); cursor: pointer; letter-spacing: -0.03em; transition: transform 150ms ease; }
+  [data-ui] .lc-trilho { width: 2.2em; height: 1.2em; background: #0E1A33; border-radius: 1em; position: relative; transition: background-color 300ms ease; }
+  [data-ui] .lc-bola { position: absolute; top: .12em; left: .12em; width: .96em; height: .96em; border-radius: 50%; background: #FF6B1A; transition: transform 300ms cubic-bezier(.2, .7, .2, 1), background-color 300ms ease; transform: translateX(1em); }
+  [data-ui][aria-checked='false'] .lc-bola { transform: none; background: #556070; }
+  [data-ui][aria-checked='false'] .lc-trilho { background: #D7DCE4; }
+  [data-ui] .lc-estado { font-size: .38em; font-family: var(--f-texto); font-weight: 600; letter-spacing: 0; color: #556070; }
+  [data-ui].leo-chave:active { transform: scale(.985); }
+
+  /* ---------- Módulos: índice com prévia ---------- */
+  .modulos { background: var(--branco); color: var(--noite); padding-block: 96px 120px; }
+  .modulos h2 { font-size: var(--t-h2); }
+  .modulos-frase { margin-top: 20px; font-size: var(--t-lead); max-width: 34em; }
+  .indice { position: relative; margin-top: 64px; display: grid; grid-template-columns: 62% 1fr; gap: 4%; }
+  .indice-lista { list-style: none; margin: 0; padding: 0; }
+  .indice-linha { padding-block: 14px; cursor: default; transition: opacity 240ms ease; outline: none; }
+  .indice-linha:focus-visible .indice-nome { text-decoration: underline; text-decoration-color: var(--leo); text-underline-offset: 6px; }
+  .indice-nome { display: block; font-family: var(--f-titulo); font-weight: 600; font-size: var(--t-h2); line-height: 1; letter-spacing: -0.035em; }
+  .indice-texto { display: block; margin-top: 8px; max-width: 46ch; }
+  .quadro-fixo { position: sticky; top: 140px; display: grid; }
+  .quadro-fixo .tela { grid-area: 1 / 1; opacity: 0; transition: opacity 240ms ease, transform 240ms ease; transform: translateY(6px); }
+  .quadro-fixo .tela.ativa { opacity: 1; transform: none; }
+  [data-ui].tela-inline { display: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .indice-lista:hover .indice-linha:not(:hover) { opacity: .35; }
   }
-  @media (max-width: 560px) {
-    .modulos { grid-template-columns: 1fr; gap: 36px; }
+  [data-ui].tela { background: #0E1A33; color: #EEF0F3; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 4px; font: 15px/1.35 var(--f-texto); }
+  [data-ui] .tela-modulo { color: #FF6B1A; font-weight: 700; font-size: 13px; }
+  [data-ui] .tela-titulo { font-weight: 600; margin-bottom: 8px; }
+  [data-ui] .tela-linha { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid #273657; }
+  [data-ui] .tela-linha strong { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Lista de espera: o formulário já aberto ---------- */
+  .espera { background: var(--cobalto-texto); color: var(--branco); min-height: 90svh; display: grid; grid-template-columns: 5fr 1fr 6fr; padding: 72px var(--margem); align-items: center; }
+  .espera-fecho { grid-column: 1; align-self: end; }
+  .espera h2 { font-size: var(--t-hero); line-height: .92; letter-spacing: -0.045em; font-weight: 700; max-width: 6ch; }
+  .espera-fecho p { margin-top: 24px; font-size: var(--t-lead); max-width: 30ch; }
+  [data-ui].dialogo { grid-column: 3; background: #fff; color: #0E1A33; border-radius: 14px; padding: 28px; width: 100%; max-width: 560px; justify-self: end; box-shadow: 0 24px 60px rgba(14, 26, 51, .35); font: 15px/1.3 var(--f-texto); }
+  [data-ui] .dlg-titulo { font: 600 20px/1.2 var(--f-texto); letter-spacing: -0.01em; margin-bottom: 18px; }
+  [data-ui] .dlg-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  [data-ui] .dlg-grade label { display: flex; flex-direction: column; gap: 6px; font-weight: 500; font-size: 14px; }
+  [data-ui] .dlg-largo { grid-column: span 2; }
+  [data-ui] input:not([type='radio']) { font: 16px var(--f-texto); padding: 12px; border: 1px solid #C9CED6; border-radius: 8px; min-height: 46px; color: #0E1A33; background: #fff; }
+  [data-ui] input:focus-visible { outline: 2px solid #2F4BE0; outline-offset: 1px; }
+  [data-ui] .dlg-interesse { border: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 6px; background: #EEF0F3; border-radius: 10px; padding: 4px; }
+  [data-ui] .dlg-interesse legend { font-weight: 500; font-size: 14px; padding: 8px 6px; float: left; width: 100%; }
+  [data-ui] .dlg-interesse label { flex: 1; position: relative; }
+  [data-ui] .dlg-interesse input { position: absolute; opacity: 0; inset: 0; }
+  [data-ui] .dlg-interesse span { display: block; text-align: center; padding: 11px 8px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: background-color 150ms ease; }
+  [data-ui] .dlg-interesse input:checked + span { background: #0E1A33; color: #fff; }
+  [data-ui] .dlg-interesse input:focus-visible + span { outline: 2px solid #2F4BE0; }
+  [data-ui] .dlg-erro { margin-top: 12px; color: #B42318; font-weight: 500; }
+  [data-ui] .dlg-botao { margin-top: 20px; width: 100%; min-height: 52px; border: 0; border-radius: 8px; background: #2F4BE0; color: #fff; font: 600 16px var(--f-texto); cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; }
+  [data-ui] .dlg-botao:hover { background: #2440C8; }
+  [data-ui] .dlg-botao:active { transform: scale(.99); }
+
+  /* ---------- Entradas ao rolar ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) [data-reveal] { opacity: 0; translate: 0 28px; transition: opacity 700ms cubic-bezier(.2, .7, .2, 1), translate 900ms cubic-bezier(.2, .7, .2, 1); }
+    :global(.js) [data-reveal].is-in { opacity: 1; translate: 0 0; }
+    :global(.js) .p2 [data-reveal] { transition-delay: 80ms; }
+    :global(.js) .p3 [data-reveal] { transition-delay: 160ms; }
+    :global(.js) .p4 [data-reveal] { transition-delay: 240ms; }
+    :global(.js) .painel-depois [data-reveal] { transition-delay: 120ms; }
+  }
+
+  /* ---------- Celular e tablet ---------- */
+  @media (max-width: 960px) {
+    .virada { grid-template-columns: 1fr; }
+    .painel { min-height: 78svh; }
+    .objeto { top: 18%; left: 10%; }
+    .passos { grid-template-columns: 1fr 1fr; }
+    .estoque { grid-template-columns: 1fr; }
+    .estoque-palco { position: sticky; top: 64px; height: auto; z-index: 3; padding: 12px 16px; }
+    .estoque-texto { padding: 48px var(--margem) 80px; }
+    .bloco { min-height: auto; padding-top: 48px; }
+    .espera { grid-template-columns: 1fr; gap: 40px; align-items: start; }
+    .espera-fecho, [data-ui].dialogo { grid-column: 1; }
+    [data-ui].dialogo { justify-self: stretch; max-width: none; }
+    .cap-leo { display: flex; flex-direction: column; }
+    .leo-palco { position: relative; right: auto; bottom: auto; margin-top: auto; padding-top: 48px; margin-right: -30vw; font-size: 15vw; }
+    .indice { grid-template-columns: 1fr; }
+    .indice-quadro { display: none; }
+    [data-ui].tela-inline { display: flex; margin-top: 16px; max-width: 420px; }
+    .indice-linha { padding-block: 24px; }
+  }
+  @media (max-width: 960px) {
+    .painel { min-height: auto; padding-bottom: 32px; }
+    .objeto { position: relative; top: auto; left: auto; margin: 32px -60% 40px 0; }
+    .painel-depois .objeto { top: auto; left: auto; }
+    .estoque-palco { position: static; }
+    [data-ui].lista-contas { transform: none; }
+    [data-ui].planilha { transform: rotate(-3deg); }
+  }
+  @media (max-width: 640px) {
+    .aba { left: calc(var(--i) * 13% + 3%); }
+    .pastas { width: 100%; min-height: 52svh; }
+    .pasta { top: calc(var(--i) * 52px + 32px); }
+    .aba { top: -32px; height: 32px; font-size: .9375rem; padding: 0 24px; }
+    .frente .botao { left: 16px; right: 16px; top: 24px; }
+    .passos { grid-template-columns: 1fr; }
+    .passo { min-height: 64svh; padding: 28px 20px; }
+    .cartao-pos { position: relative; top: auto; left: auto; margin: 32px 0 0; order: 2; }
+    .clausula { order: 1; margin-top: 0; }
+    .passos h2 { margin-bottom: 16px; }
+    [data-ui] .un-preco { font-size: 12px; }
+    [data-ui] .esp-info { min-height: 0; font-size: 13px; }
+    .cap-leo { min-height: 86svh; }
+    .leo-palco { font-size: 20vw; margin-right: -40vw; }
+    [data-ui] .dlg-grade { grid-template-columns: 1fr; }
+    [data-ui] .dlg-largo { grid-column: auto; }
+    [data-ui].dialogo { padding: 20px; }
   }
 </style>
