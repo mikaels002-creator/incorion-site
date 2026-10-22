@@ -144,10 +144,117 @@ export const FAQ = [
   ['Quando posso começar?', 'A Incorion está abrindo para as primeiras incorporadoras. Solicite uma demonstração e a nossa equipe entra em contato.'],
 ];
 
+export function slugModulo(nome: string) {
+  return ({ 'Financeiro': 'financeiro', 'Orçamento': 'orcamento', 'Compras': 'compras', 'Obras': 'obras', 'Comercial': 'comercial', 'Contratos': 'contratos', 'Pós-obra': 'pos-obra', 'Investidores': 'investidores' } as Record<string, string>)[nome] ?? 'corretores';
+}
+
 export const NAV = [
-  { href: '/#modulos', label: 'Soluções', sub: MODULOS.map((m) => ({ href: '/#modulos', label: m.nome })) },
+  { href: '/#modulos', label: 'Soluções', sub: [...MODULOS.map((m) => ({ href: `/modulos/${slugModulo(m.nome)}`, label: m.nome })), { href: '/leo', label: 'Leo IA' }] },
   { href: '/#perfis', label: 'Para quem', sub: PERFIS.map((p) => ({ href: `/${p.slug}`, label: p.nome })) },
-  { href: '/#leo', label: 'Leo IA' },
+  { href: '/leo', label: 'Leo IA' },
   { href: '/blog', label: 'Blog' },
   { href: '/#contato', label: 'Contato' },
 ];
+
+// Conteúdo das páginas de cada módulo (/modulos/...).
+export const PAGINAS_MODULOS = {
+  Financeiro: {
+    slug: 'financeiro',
+    titulo: 'Software financeiro para incorporadoras e construtoras',
+    chamada: 'O caixa de cada obra e de cada empresa, sempre em dia.',
+    recursos: [
+      ['Contas a pagar e a receber', 'Por empresa, por SPE e por obra, com centro de custo e etapa em cada lançamento.'],
+      ['Fluxo de caixa', 'Previsto e realizado, por dia, semana e mês, com os recebíveis das vendas já incluídos.'],
+      ['Conciliação com o extrato', 'Os lançamentos são conferidos com o extrato do banco e as diferenças aparecem na hora.'],
+      ['Aprovação de pagamentos', 'Quem tem permissão aprova pelo sistema ou pelo WhatsApp, com o Leo.'],
+    ],
+  },
+  Orçamento: {
+    slug: 'orcamento',
+    titulo: 'Orçamento de obra com previsto x realizado',
+    chamada: 'Saiba quanto a obra custa e quanto já foi gasto, etapa por etapa.',
+    recursos: [
+      ['Orçamento por etapa', 'Monte o orçamento da obra por etapa e por item, do terreno ao acabamento.'],
+      ['Previsto x realizado', 'Cada compra e cada pagamento atualizam o realizado na hora.'],
+      ['Revisões', 'Guarde as versões do orçamento e compare o que mudou entre elas.'],
+      ['Alertas de estouro', 'O Leo avisa quando uma etapa passa do valor previsto.'],
+    ],
+  },
+  Compras: {
+    slug: 'compras',
+    titulo: 'Gestão de compras e suprimentos para obras',
+    chamada: 'Da lista de materiais ao pedido entregue, sem retrabalho.',
+    recursos: [
+      ['Lista de materiais', 'Os quantitativos saem do projeto e viram pedido de compra.'],
+      ['Cotação comparada', 'Compare preço, prazo e forma de pagamento de vários fornecedores lado a lado.'],
+      ['Aprovação do pedido', 'O pedido vai para aprovação e, depois de aprovado, já entra no financeiro.'],
+      ['Entrega conferida', 'A nota fiscal é conferida com o pedido quando o material chega na obra.'],
+    ],
+  },
+  Obras: {
+    slug: 'obras',
+    titulo: 'Gestão de obras com diário de obra e cronograma',
+    chamada: 'O que acontece no canteiro, visto do escritório.',
+    recursos: [
+      ['Diário de obra', 'Fotos, áudios e registros da equipe, organizados por dia e por obra.'],
+      ['Cronograma', 'Etapas, prazos e o avanço físico previsto e realizado.'],
+      ['Equipe e terceiros', 'Quem esteve na obra, em qual etapa, e as medições dos empreiteiros.'],
+      ['Do WhatsApp para o sistema', 'O Leo transforma as mensagens do grupo da obra em registros no diário.'],
+    ],
+  },
+  Comercial: {
+    slug: 'comercial',
+    titulo: 'Gestão comercial e espelho de vendas para incorporadoras',
+    chamada: 'Estoque, tabela, reservas e propostas em um lugar só.',
+    recursos: [
+      ['Espelho de vendas', 'Cada unidade com a sua situação: livre, reservada ou vendida, sempre atualizada.'],
+      ['Tabela de vendas', 'Preços, condições e reajustes aplicados de uma vez a todas as unidades.'],
+      ['Reservas e propostas', 'Reservas com prazo, propostas com aprovação e histórico de cada cliente.'],
+      ['Painel de vendas', 'VGV vendido, velocidade de vendas e metas por empreendimento.'],
+    ],
+  },
+  [MODULO_CORRETORES]: {
+    slug: 'corretores',
+    titulo: 'Portal para corretores e imobiliárias parceiras',
+    chamada: 'Seus parceiros vendendo com o estoque certo, pelo celular.',
+    recursos: [
+      ['Estoque ao vivo', 'O corretor vê só as unidades livres, com preço e condições atualizados.'],
+      ['Reserva com prazo', 'Reserva pelo celular por 48 horas, que vence sozinha se não virar proposta.'],
+      ['Material de vendas', 'Plantas, imagens e tabela sempre na última versão.'],
+      ['Acompanhamento', 'A incorporadora vê quem reservou, quem propôs e quem vendeu.'],
+    ],
+  },
+  Contratos: {
+    slug: 'contratos',
+    titulo: 'Gestão de contratos e carteira de recebíveis',
+    chamada: 'Do contrato assinado à última parcela recebida.',
+    recursos: [
+      ['Contratos de venda', 'Gerados a partir da proposta aprovada, com as condições negociadas.'],
+      ['Aditivos e distratos', 'Cada alteração registrada, com o histórico do contrato.'],
+      ['Carteira de recebíveis', 'Parcelas, correção monetária e inadimplência em um painel.'],
+      ['Cobrança', 'Lembretes de vencimento e cobrança automática pelo WhatsApp, com o Leo.'],
+    ],
+  },
+  'Pós-obra': {
+    slug: 'pos-obra',
+    titulo: 'Assistência técnica e pós-obra para construtoras',
+    chamada: 'O cliente bem atendido depois da entrega das chaves.',
+    recursos: [
+      ['Chamados', 'O cliente abre o chamado e a equipe acompanha do pedido à solução.'],
+      ['Garantias', 'Prazos de garantia por sistema construtivo, conforme a norma.'],
+      ['Visitas técnicas', 'Agenda das visitas, responsável e registro com fotos.'],
+      ['Histórico por unidade', 'Tudo o que foi feito em cada unidade, num lugar só.'],
+    ],
+  },
+  Investidores: {
+    slug: 'investidores',
+    titulo: 'Relatórios para sócios e investidores de empreendimentos',
+    chamada: 'Transparência para quem investiu, sem planilha no fim do mês.',
+    recursos: [
+      ['Relatório do empreendimento', 'Vendas, obra, caixa e resultado em um relatório pronto.'],
+      ['Orçamento x realizado', 'Por grupo de custo: terreno, projetos, obra, comercial e impostos.'],
+      ['Acesso do investidor', 'Cada sócio vê só os empreendimentos em que investiu.'],
+      ['Histórico', 'Os relatórios de cada período ficam guardados para consulta.'],
+    ],
+  },
+};

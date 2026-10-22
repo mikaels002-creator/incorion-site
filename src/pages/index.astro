@@ -3,12 +3,18 @@ import Base from '../layouts/Base.astro';
 import Demonstracao from '../components/Demonstracao.astro';
 import Plataforma from '../components/Plataforma.astro';
 import { getCollection } from 'astro:content';
-import { MODULOS, PERFIS, FAQ, FOTOS, foto } from '../config';
+import { MODULOS, PERFIS, FAQ, FOTOS, foto, slugModulo } from '../config';
 
 const posts = (await getCollection('blog', ({ data }) => !data.rascunho))
   .sort((a, b) => b.data.data.valueOf() - a.data.data.valueOf())
   .slice(0, 3);
 const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+// Enquanto o blog não tem posts, mostra os próximos temas.
+const proximos = [
+  { href: '/blog', meta: 'Mercado e crédito · em breve', titulo: 'Além do banco: CRI, debênture e fundos financiando a incorporação', resumo: 'Como o mercado de capitais virou fonte de crédito para as incorporadoras e o que isso muda na sua obra.' },
+  { href: '/blog', meta: 'Gestão · em breve', titulo: '5 sinais de que o caixa da obra fugiu do controle', resumo: 'Os sintomas mais comuns de um caixa desorganizado e como corrigir antes que vire problema.' },
+  { href: '/blog', meta: 'Leo · em breve', titulo: 'Conheça o Leo, a IA que trabalha no WhatsApp da incorporadora', resumo: 'O que o Leo faz, como ele entra na rotina da equipe e por que ele não muda o jeito que vocês trabalham.' },
+];
 ---
 <Base>
   <!-- Abertura -->
@@ -19,7 +25,7 @@ const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', ye
       <p class="hero-sub">Do terreno às chaves: financeiro, obras, compras, vendas e corretores no mesmo sistema. Com o Leo, a inteligência artificial que trabalha no WhatsApp da sua empresa.</p>
       <div class="acoes">
         <a class="botao" href="#contato">Solicite uma demonstração</a>
-        <a class="botao contorno" href="#leo">Conheça o Leo</a>
+        <a class="botao contorno" href="/leo">Conheça o Leo</a>
       </div>
       <ul class="selos">
         <li>Feita para incorporadoras e construtoras</li>
@@ -120,13 +126,19 @@ const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', ye
       <ul class="modulos-grade">
         {MODULOS.map((m) => (
           <li data-reveal>
-            <h3>{m.nome}</h3>
-            <p>{m.texto}</p>
+            <a href={`/modulos/${slugModulo(m.nome)}`}>
+              <h3>{m.nome}</h3>
+              <p>{m.texto}</p>
+              <span class="saiba-mod">Saiba mais</span>
+            </a>
           </li>
         ))}
         <li class="modulo-leo" data-reveal>
-          <h3>Leo IA</h3>
-          <p>O módulo de inteligência artificial que trabalha no WhatsApp. Contratado à parte, junto com a plataforma.</p>
+          <a href="/leo">
+            <h3>Leo IA</h3>
+            <p>O módulo de inteligência artificial que trabalha no WhatsApp. Contratado à parte, junto com a plataforma.</p>
+            <span class="saiba-mod">Saiba mais</span>
+          </a>
         </li>
       </ul>
       <div class="centro"><a class="botao" href="#contato">Solicite uma demonstração</a></div>
@@ -171,25 +183,27 @@ const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', ye
     </div>
   </section>
 
-  {posts.length > 0 && (
-    <section class="conteudos">
-      <div class="recorte">
-        <div class="cabeca-secao linha">
-          <h2>Conteúdos para quem incorpora e constrói</h2>
-          <a class="link-seta" href="/blog">Ver todos os posts</a>
+  <!-- Conteúdos -->
+  <section class="conteudos">
+    <div class="recorte">
+      <div class="cabeca-secao linha">
+        <div>
+          <h2 data-reveal>Mercado, crédito e gestão para quem incorpora</h2>
+          <p data-reveal>Conteúdos sobre juros, crédito imobiliário, CRI, fundos e gestão de obras, toda semana no blog.</p>
         </div>
-        <div class="posts-grade">
-          {posts.map((p) => (
-            <a class="post" href={`/blog/${p.id}`}>
-              <span class="meta">{p.data.categoria} · {fmt.format(p.data.data)}</span>
-              <h3>{p.data.titulo}</h3>
-              <p>{p.data.resumo}</p>
-            </a>
-          ))}
-        </div>
+        <a class="link-seta" href="/blog">Ver o blog</a>
       </div>
-    </section>
-  )}
+      <div class="posts-grade">
+        {(posts.length > 0 ? posts.map((p) => ({ href: `/blog/${p.id}`, meta: `${p.data.categoria} · ${fmt.format(p.data.data)}`, titulo: p.data.titulo, resumo: p.data.resumo })) : proximos).map((p) => (
+          <a class="post" href={p.href} data-reveal>
+            <span class="meta">{p.meta}</span>
+            <h3>{p.titulo}</h3>
+            <p>{p.resumo}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 
   <!-- Contato -->
   <section class="contato" id="contato">
@@ -299,7 +313,10 @@ const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', ye
   .modulos-grade { list-style: none; margin: 0 0 48px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; }
   .modulos-grade li { background: var(--branco); border-radius: 14px; padding: 24px; transition: transform var(--mov), box-shadow var(--mov); }
   .modulos-grade li:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(14, 26, 51, .1); }
+  .modulos-grade a { display: flex; flex-direction: column; height: 100%; text-decoration: none; }
   .modulos-grade p { margin-top: 8px; color: var(--grafite); }
+  .saiba-mod { margin-top: auto; padding-top: 14px; font-weight: 600; color: var(--cobalto-texto); }
+  .modulo-leo .saiba-mod { color: var(--leo); }
   .modulo-leo { background: var(--noite) !important; color: var(--branco); }
   .modulo-leo h3 { color: var(--leo); }
   .modulo-leo p { color: var(--suave-escuro) !important; }
@@ -325,6 +342,7 @@ const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', ye
   .posts-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .post { text-decoration: none; background: var(--concreto); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px; transition: transform var(--mov); }
   .post:hover { transform: translateY(-3px); }
+  .conteudos .cabeca-secao p { margin-top: 12px; font-size: var(--t-lead); color: var(--grafite); }
   .post .meta { font-size: var(--t-pequeno); color: var(--grafite); }
   .post p { color: var(--grafite); }
   .link-seta { font-weight: 600; color: var(--cobalto-texto); }

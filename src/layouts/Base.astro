@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { SITE, NAV, PERFIS, MODULOS, FOTOS } from '../config';
+import { SITE, NAV, PERFIS, MODULOS, FOTOS, slugModulo } from '../config';
 
 interface Props {
   titulo?: string;
@@ -88,14 +88,14 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
           </div>
           <div>
             <p class="rodape-titulo">Soluções</p>
-            <ul>{MODULOS.map((m) => <li><a href="/#modulos">{m.nome}</a></li>)}</ul>
+            <ul>{MODULOS.map((m) => <li><a href={`/modulos/${slugModulo(m.nome)}`}>{m.nome}</a></li>)}</ul>
           </div>
           <div>
             <p class="rodape-titulo">Para quem</p>
             <ul>{PERFIS.map((p) => <li><a href={`/${p.slug}`}>{p.nome}</a></li>)}</ul>
             <p class="rodape-titulo segundo">Incorion</p>
             <ul>
-              <li><a href="/#leo">Leo IA</a></li>
+              <li><a href="/leo">Leo IA</a></li>
               <li><a href="/blog">Blog</a></li>
               <li><a href="/#faq">Perguntas frequentes</a></li>
             </ul>

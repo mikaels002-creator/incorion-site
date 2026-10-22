@@ -1,0 +1,199 @@
+---
+import Base from '../layouts/Base.astro';
+import Demonstracao from '../components/Demonstracao.astro';
+
+const areas = [
+  ['Financeiro', 'Lê boletos e notas enviados no WhatsApp, lança no contas a pagar, manda a lista do dia para aprovação e cobra quem está atrasado.'],
+  ['Obras', 'Transforma os áudios, fotos e mensagens do grupo da obra em registros no diário de obra e avisa quando uma etapa atrasa.'],
+  ['Compras', 'Recebe pedidos de material da obra, monta a cotação e avisa quando o pedido precisa de aprovação.'],
+  ['Comercial', 'Avisa a equipe a cada reserva e venda, lembra os corretores dos prazos e responde dúvidas sobre o estoque.'],
+  ['Contratos', 'Lembra os clientes das parcelas que vão vencer e avisa você sobre os atrasos.'],
+  ['Agenda e tarefas', 'Anota compromissos e tarefas que surgem nas conversas e te lembra na hora certa.'],
+];
+const conversas = [
+  {
+    titulo: 'Contas do dia',
+    msgs: [
+      ['leo', 'Bom dia! Hoje são 3 contas para pagar, total R$ 37.770: Concreteira Vale Forte, Aço Norte e Elétrica Ponto Certo. Autoriza?'],
+      ['eu', 'Pode pagar as duas primeiras. A elétrica segura para sexta.'],
+      ['leo', 'Combinado. Aprovei R$ 34.768 e remarquei a Elétrica Ponto Certo para sexta, 31/10.'],
+    ],
+  },
+  {
+    titulo: 'Grupo da obra',
+    msgs: [
+      ['outro', 'Mestre de obras: terminamos a forma da 7ª laje, concretagem amanhã às 7h.'],
+      ['leo', 'Registrei no diário de obra do Residencial Aurora. A concreteira já está confirmada para amanhã, 7h, 42 m³.'],
+    ],
+  },
+  {
+    titulo: 'Vendas',
+    msgs: [
+      ['leo', 'A unidade 702 foi reservada por Ana Paula, da Imobiliária Horizonte. A reserva vence em 48 h.'],
+      ['eu', 'Ótimo. Me avisa se a proposta não vier até amanhã.'],
+      ['leo', 'Pode deixar. Amanhã às 17h eu te aviso como está.'],
+    ],
+  },
+];
+const perguntas = [
+  ['O Leo faz pagamentos sozinho?', 'Não. O Leo prepara e organiza, mas pagamentos e decisões importantes sempre passam pela aprovação de quem tem permissão.'],
+  ['Preciso mudar o jeito que a equipe usa o WhatsApp?', 'Não. A equipe continua usando os mesmos grupos. O Leo participa das conversas e leva as informações para o sistema.'],
+  ['O Leo vem junto com a plataforma?', 'O Leo é um módulo à parte, contratado junto com a Incorion. Ele usa as informações dos módulos que você tiver.'],
+  ['Quem pode falar com o Leo?', 'Você define quem conversa com o Leo e o que cada pessoa pode pedir ou ver.'],
+];
+---
+<Base titulo="Leo, a IA do mercado imobiliário" descricao="O Leo é a inteligência artificial da Incorion. Ele trabalha no WhatsApp da incorporadora: lança contas, organiza o diário de obra, avisa vendas e cobra prazos.">
+  <section class="hero">
+    <div class="recorte hero-grade">
+      <div>
+        <p class="trilha"><a href="/">Início</a> / Leo IA</p>
+        <h1>Leo, a IA do mercado imobiliário.</h1>
+        <p class="hero-sub">O Leo trabalha no WhatsApp da sua incorporadora. Ele lê as conversas da equipe, organiza tudo na Incorion e te pede aprovação quando precisa.</p>
+        <div class="acoes">
+          <a class="botao laranja" href="#contato">Quero ver o Leo em ação</a>
+          <a class="botao contorno" href="#o-que-faz">O que ele faz</a>
+        </div>
+      </div>
+      <div class="leo-figura">
+        <img src="/marca/leo-avatar.svg" alt="Leo, a inteligência artificial da Incorion" width="512" height="512" />
+      </div>
+    </div>
+  </section>
+
+  <section class="faz" id="o-que-faz">
+    <div class="recorte">
+      <div class="cabeca">
+        <h2 data-reveal>O que o Leo faz em cada área</h2>
+        <p data-reveal>Ele usa as informações dos módulos que a sua empresa tiver e trabalha onde a equipe já está: no WhatsApp.</p>
+      </div>
+      <div class="faz-grade">
+        {areas.map(([t, d]) => (
+          <article data-reveal>
+            <span class="laje" aria-hidden="true"></span>
+            <h3>{t}</h3>
+            <p>{d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="exemplos">
+    <div class="recorte">
+      <div class="cabeca">
+        <h2 data-reveal>Veja o Leo no dia a dia</h2>
+        <p data-reveal>Exemplos de conversa, com dados fictícios.</p>
+      </div>
+      <div class="exemplos-grade">
+        {conversas.map((c) => (
+          <div class="conversa" data-reveal>
+            <p class="conversa-titulo">{c.titulo}</p>
+            {c.msgs.map(([quem, t]) => (
+              <p class={`msg ${quem}`}>{quem === 'leo' && <span class="quem">Leo</span>}{t}</p>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="controle">
+    <div class="recorte controle-grade">
+      <div data-reveal>
+        <h2>Você sempre no controle.</h2>
+        <p>O Leo organiza, lembra e avisa. Pagamentos, aprovações e decisões importantes continuam com você e com quem você autorizar.</p>
+      </div>
+      <ul class="lista" data-reveal>
+        <li>Cada pessoa só vê e pede o que tem permissão</li>
+        <li>Pagamentos sempre passam por aprovação</li>
+        <li>Tudo o que o Leo faz fica registrado no sistema</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="contato" id="contato">
+    <div class="recorte contato-grade">
+      <div data-reveal>
+        <h2>Veja o Leo trabalhando com a sua equipe.</h2>
+        <p>Mostramos o Leo nos grupos de WhatsApp de uma obra de exemplo e explicamos como ele entra na rotina da sua empresa.</p>
+      </div>
+      <Demonstracao interesse="Leo" />
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="recorte faq-grade">
+      <h2>Perguntas sobre o Leo</h2>
+      <div class="faq-lista">
+        {perguntas.map(([p, r]) => (
+          <details>
+            <summary>{p}<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></summary>
+            <p>{r}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  section { padding-block: clamp(72px, 9vw, 120px); }
+  h2 { font-size: var(--t-h2); line-height: 1.08; }
+  h3 { font: 600 1.375rem/1.2 var(--f-titulo); letter-spacing: -0.02em; }
+  .cabeca { max-width: 760px; margin-bottom: 40px; }
+  .cabeca p { margin-top: 14px; font-size: var(--t-lead); color: var(--grafite); }
+
+  .hero { background: var(--noite); color: var(--branco); overflow: hidden; }
+  .hero-grade { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; }
+  .trilha { font-size: var(--t-pequeno); color: var(--suave-escuro); margin-bottom: 20px; }
+  .trilha a { color: inherit; }
+  .hero h1 { font-size: clamp(2.25rem, 1.2rem + 3.6vw, 4.25rem); line-height: 1.04; letter-spacing: -0.035em; max-width: 14ch; }
+  .hero-sub { margin-top: 20px; font-size: var(--t-lead); color: #E2E6EC; max-width: 34em; }
+  .acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .botao.laranja { background: var(--leo-texto); }
+  .botao.laranja:hover { background: #A8380A; }
+  .botao.contorno { background: transparent; color: var(--branco); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .7); }
+  .leo-figura { justify-self: center; width: min(360px, 80%); }
+  .leo-figura img { width: 100%; border-radius: 50%; }
+
+  .faz-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .faz article { background: var(--concreto); border-radius: 16px; padding: 28px; }
+  .laje { display: block; width: 44px; height: 14px; background: var(--leo); clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); margin-bottom: 18px; }
+  .faz p { margin-top: 10px; color: var(--grafite); }
+
+  .exemplos { background: var(--concreto); }
+  .exemplos-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+  .conversa { background: #E3E7EE; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .conversa-titulo { font: 600 1.125rem var(--f-titulo); margin-bottom: 4px; }
+  .msg { background: var(--branco); border-radius: 12px; padding: 10px 14px; max-width: 92%; font-size: var(--t-pequeno); line-height: 1.45; }
+  .msg .quem { display: block; font-weight: 700; color: var(--leo-texto); margin-bottom: 2px; }
+  .msg.eu { align-self: flex-end; background: #D9FDD3; }
+  .msg.outro { color: var(--noite); }
+
+  .controle-grade { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; }
+  .controle p { margin-top: 16px; font-size: var(--t-lead); color: var(--grafite); max-width: 32em; }
+  .lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .lista li { background: var(--concreto); border-radius: 12px; padding: 18px 20px; font-weight: 500; }
+
+  .contato { background: var(--noite); color: var(--branco); }
+  .contato-grade { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+  .contato p { margin-top: 18px; font-size: var(--t-lead); color: #E2E6EC; max-width: 30em; }
+
+  .faq-grade { display: grid; grid-template-columns: 1fr 2fr; gap: 48px; align-items: start; }
+  .faq-lista { display: grid; gap: 12px; }
+  details { background: var(--concreto); border-radius: 12px; }
+  summary { list-style: none; cursor: pointer; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-weight: 600; font-size: 1.125rem; }
+  summary::-webkit-details-marker { display: none; }
+  summary svg { width: 12px; flex: none; transition: transform var(--mov); }
+  details[open] summary svg { transform: rotate(180deg); }
+  details p { padding: 0 24px 22px; color: var(--grafite); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) [data-reveal] { opacity: 0; translate: 0 24px; transition: opacity 650ms cubic-bezier(.2, .7, .2, 1), translate 800ms cubic-bezier(.2, .7, .2, 1); }
+    :global(.js) [data-reveal].is-in { opacity: 1; translate: 0 0; }
+  }
+  @media (max-width: 960px) {
+    .hero-grade, .faz-grade, .exemplos-grade, .controle-grade, .contato-grade, .faq-grade { grid-template-columns: 1fr; }
+    .leo-figura { width: 200px; justify-self: start; }
+  }
+</style>

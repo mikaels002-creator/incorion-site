@@ -1,0 +1,129 @@
+---
+import Base from '../../layouts/Base.astro';
+import Demonstracao from '../../components/Demonstracao.astro';
+import { MODULOS, PAGINAS_MODULOS, MODULO_CORRETORES } from '../../config';
+
+export function getStaticPaths() {
+  return MODULOS.map((m) => ({ params: { modulo: PAGINAS_MODULOS[m.nome].slug }, props: { m } }));
+}
+const { m } = Astro.props;
+const pg = PAGINAS_MODULOS[m.nome];
+const outros = MODULOS.filter((x) => x.nome !== m.nome);
+const interesse = m.nome === MODULO_CORRETORES ? 'Corretores' : 'Incorion';
+---
+<Base titulo={pg.titulo} descricao={`${pg.chamada} ${m.texto}`}>
+  <section class="hero">
+    <div class="recorte hero-grade">
+      <div>
+        <p class="trilha"><a href="/">Início</a> / <a href="/#modulos">Soluções</a> / {m.nome}</p>
+        <h1>{pg.titulo}</h1>
+        <p class="hero-sub">{pg.chamada} {m.texto}</p>
+        <a class="botao" href="#contato">Solicite uma demonstração</a>
+      </div>
+      <div class="tela" data-ui aria-label="Tela ilustrativa, com dados fictícios">
+        <p class="tela-modulo">Incorion · {m.nome}</p>
+        <p class="tela-titulo">{m.tela}</p>
+        {m.linhas.map(([a, b]) => <p class="tela-linha"><span>{a}</span><strong>{b}</strong></p>)}
+        <p class="tela-nota">Dados fictícios</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="recursos">
+    <div class="recorte">
+      <h2 data-reveal>O que o módulo {m.nome} faz</h2>
+      <div class="recursos-grade">
+        {pg.recursos.map(([t, d]) => (
+          <article data-reveal>
+            <span class="laje" aria-hidden="true"></span>
+            <h3>{t}</h3>
+            <p>{d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="leo-faixa">
+    <div class="recorte leo-faixa-grade">
+      <img src="/marca/leo-avatar.svg" alt="" width="72" height="72" />
+      <div>
+        <h2>Com o Leo, o {m.nome} também funciona pelo WhatsApp.</h2>
+        <p>O Leo, a inteligência artificial da Incorion, leva as informações deste módulo para o WhatsApp da sua equipe e traz de volta o que acontece no dia a dia.</p>
+      </div>
+      <a class="botao laranja" href="/leo">Conheça o Leo</a>
+    </div>
+  </section>
+
+  <section class="contato" id="contato">
+    <div class="recorte contato-grade">
+      <div data-reveal>
+        <h2>Veja o {m.nome} funcionando.</h2>
+        <p>Nossa equipe mostra o módulo com a realidade da sua empresa e explica como ele conversa com os outros.</p>
+      </div>
+      <Demonstracao interesse={interesse} />
+    </div>
+  </section>
+
+  <section class="outros">
+    <div class="recorte">
+      <h2>Outros módulos</h2>
+      <ul class="outros-grade">
+        {outros.map((o) => (
+          <li><a href={`/modulos/${PAGINAS_MODULOS[o.nome].slug}`}><strong>{o.nome}</strong><span>{o.texto}</span></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  section { padding-block: clamp(72px, 9vw, 120px); }
+  h2 { font-size: var(--t-h2); line-height: 1.08; }
+  h3 { font: 600 1.375rem/1.2 var(--f-titulo); letter-spacing: -0.02em; }
+  .hero { background: var(--noite); color: var(--branco); }
+  .hero-grade { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(40px, 6vw, 80px); align-items: center; }
+  .trilha { font-size: var(--t-pequeno); color: var(--suave-escuro); margin-bottom: 20px; }
+  .trilha a { color: inherit; }
+  .hero h1 { font-size: clamp(2.25rem, 1.2rem + 3vw, 3.75rem); line-height: 1.05; letter-spacing: -0.035em; }
+  .hero-sub { margin: 20px 0 32px; font-size: var(--t-lead); color: #E2E6EC; max-width: 36em; }
+  [data-ui].tela { background: #fff; color: #0E1A33; border-radius: 14px; padding: 22px; box-shadow: 0 30px 80px rgba(0, 0, 0, .3); font: 15px/1.4 var(--f-texto); }
+  [data-ui] .tela-modulo { color: #C2410C; font-weight: 700; font-size: 13px; }
+  [data-ui] .tela-titulo { font: 700 20px/1.2 var(--f-titulo); margin: 6px 0 12px; }
+  [data-ui] .tela-linha { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #EEF0F3; }
+  [data-ui] .tela-linha strong { font-variant-numeric: tabular-nums; }
+  [data-ui] .tela-nota { margin-top: 10px; font-size: 12px; color: #556070; }
+
+  .recursos h2 { margin-bottom: 40px; max-width: 20ch; }
+  .recursos-grade { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .recursos article { background: var(--concreto); border-radius: 16px; padding: 28px; }
+  .laje { display: block; width: 44px; height: 14px; background: var(--cobalto-texto); clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); margin-bottom: 18px; }
+  .recursos p { margin-top: 10px; color: var(--grafite); }
+
+  .leo-faixa { background: var(--concreto); padding-block: 64px; }
+  .leo-faixa-grade { display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; }
+  .leo-faixa img { width: 72px; }
+  .leo-faixa h2 { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.125rem); }
+  .leo-faixa p { margin-top: 10px; color: var(--grafite); max-width: 48em; }
+  .botao.laranja { background: var(--leo-texto); }
+
+  .contato { background: var(--noite); color: var(--branco); }
+  .contato-grade { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+  .contato p { margin-top: 18px; font-size: var(--t-lead); color: #E2E6EC; max-width: 30em; }
+
+  .outros h2 { margin-bottom: 28px; }
+  .outros-grade { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 12px; }
+  .outros a { display: flex; flex-direction: column; gap: 6px; height: 100%; text-decoration: none; background: var(--concreto); border-radius: 12px; padding: 20px; transition: transform var(--mov); }
+  .outros a:hover { transform: translateY(-3px); }
+  .outros strong { font: 600 1.125rem var(--f-titulo); }
+  .outros span { color: var(--grafite); font-size: var(--t-pequeno); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) [data-reveal] { opacity: 0; translate: 0 24px; transition: opacity 650ms cubic-bezier(.2, .7, .2, 1), translate 800ms cubic-bezier(.2, .7, .2, 1); }
+    :global(.js) [data-reveal].is-in { opacity: 1; translate: 0 0; }
+  }
+  @media (max-width: 900px) {
+    .hero-grade, .contato-grade, .recursos-grade { grid-template-columns: 1fr; }
+    .leo-faixa-grade { grid-template-columns: 1fr; }
+  }
+</style>
