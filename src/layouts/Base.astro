@@ -10,9 +10,11 @@ interface Props {
 }
 const { titulo, descricao = SITE.descricao, imagem = '/compartilhar.png', tipo = 'website' } = Astro.props;
 const tituloCompleto = titulo ? `${titulo} | ${SITE.nome}` : `${SITE.nome} | Gestão de incorporadoras`;
-const canonica = new URL(Astro.url.pathname, SITE.url).href;
+// Endereço oficial da página, sem o ".html" do final.
+const caminho = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') || '/';
+const canonica = new URL(caminho, SITE.url).href;
 const imagemUrl = new URL(imagem, SITE.url).href;
-const aqui = Astro.url.pathname;
+const aqui = caminho;
 ---
 <!doctype html>
 <html lang="pt-BR">
