@@ -5,6 +5,9 @@ data: 2026-10-27
 autor: Equipe Incorion
 categoria: Novidades
 rascunho: true
+capa: /blog/manifesto-capa.jpg
+capaAlt: Engenheiro e empresário conferem um tablet diante de um prédio em construção
+audio: /blog/audio/manifesto-leo.mp3
 ---
 
 Quem incorpora vive entre dois mundos. De um lado, o canteiro: concreto, prazo, chuva, mão de obra, fornecedor que atrasa. Do outro, o escritório: contas a pagar, repasse de clientes, contrato com investidor, estoque de unidades, relatório para o banco.
@@ -12,6 +15,8 @@ Quem incorpora vive entre dois mundos. De um lado, o canteiro: concreto, prazo, 
 Esses dois mundos quase nunca conversam. A obra fala pelo WhatsApp. O financeiro fala por planilha. O comercial fala com o corretor por telefone. E o dono da empresa passa o dia juntando as peças para entender uma coisa simples: **como está o meu empreendimento hoje?**
 
 A Incorion nasceu para responder essa pergunta.
+
+![Escritório de uma incorporadora com notebook, plantas e capacete, e um prédio em obra pela janela](/blog/manifesto-escritorio.jpg)
 
 ## O que acreditamos
 

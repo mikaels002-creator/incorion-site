@@ -12,6 +12,9 @@ const blog = defineCollection({
     autor: z.enum(['Leo', 'Equipe Incorion']),
     categoria: z.enum(['Novidades', 'Gestão', 'Mercado e crédito', 'Corretores', 'Leo']),
     rascunho: z.boolean().default(false),
+    capa: z.string().optional(),
+    capaAlt: z.string().optional(),
+    audio: z.string().optional(),
   }),
 });
 

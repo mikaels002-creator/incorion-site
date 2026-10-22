@@ -8,7 +8,9 @@ const posts = (await getCollection('blog', ({ data }) => !data.rascunho))
 const [destaque, ...resto] = posts;
 const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const FOTO_CATEGORIA = { 'Novidades': 'predio', 'Gestão': 'laje', 'Mercado e crédito': 'fachada', 'Corretores': 'entrega', 'Leo': 'grua' };
-const fotoDe = (p) => FOTOS[FOTO_CATEGORIA[p.data.categoria] ?? 'predio'];
+const fotoPadrao = (p) => FOTOS[FOTO_CATEGORIA[p.data.categoria] ?? 'predio'];
+const img = (p, w, h) => p.data.capa ?? foto(fotoPadrao(p).id, w, h);
+const alt = (p) => p.data.capaAlt ?? fotoPadrao(p).alt;
 const temas = [
   ['Gestão', 'Obras, caixa e rotina de uma incorporadora organizada.'],
   ['Mercado e crédito', 'Juros, financiamento, CRI, debêntures e fundos.'],
@@ -30,7 +32,7 @@ const temas = [
       {destaque ? (
         <>
           <a class="destaque" href={`/blog/${destaque.id}`}>
-            <img src={foto(fotoDe(destaque).id, 1100, 700)} alt={fotoDe(destaque).alt} width="1100" height="700" />
+            <img src={img(destaque, 1100, 700)} alt={alt(destaque)} width="1100" height="700" />
             <div>
               <span class="cat">{destaque.data.categoria}</span>
               <h2>{destaque.data.titulo}</h2>
@@ -43,7 +45,7 @@ const temas = [
               {resto.map((p) => (
                 <li>
                   <a href={`/blog/${p.id}`}>
-                    <img src={foto(fotoDe(p).id, 700, 440)} alt={fotoDe(p).alt} width="700" height="440" loading="lazy" />
+                    <img src={img(p, 700, 440)} alt={alt(p)} width="700" height="440" loading="lazy" />
                     <span class="cat">{p.data.categoria}</span>
                     <h3>{p.data.titulo}</h3>
                     <span class="meta">{fmt.format(p.data.data)} · por {p.data.autor}</span>
