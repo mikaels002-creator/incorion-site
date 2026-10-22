@@ -1,12 +1,13 @@
 ---
-// Formulário "Solicite uma demonstração". Por enquanto abre um e-mail pronto;
-// na etapa 3 passa a gravar no sistema (Supabase) e o Leo avisa no WhatsApp.
+// Formulário "Solicite uma demonstração".
+// Grava o pedido no sistema da Incorion (função inc-lead no Supabase) e o Leo avisa no WhatsApp.
+// Se a conexão falhar, abre um e-mail pronto como plano B.
 import { SITE } from '../config';
 interface Props { interesse?: string }
 const { interesse = 'Incorion' } = Astro.props;
 const opcoes = [['Incorion', 'A plataforma'], ['Leo', 'O Leo'], ['Corretores', 'Corretores']];
 ---
-<form class="demo" id="form-demo" novalidate data-email={SITE.email}>
+<form class="demo" id="form-demo" novalidate data-email={SITE.email} data-destino="https://kssprfrcardprazjzrta.supabase.co/functions/v1/inc-lead">
   <p class="demo-titulo">Solicite uma demonstração</p>
   <p class="demo-sub">Preencha e a nossa equipe fala com você.</p>
   <div class="demo-grade">
@@ -26,21 +27,42 @@ const opcoes = [['Incorion', 'A plataforma'], ['Leo', 'O Leo'], ['Corretores', '
       ))}
     </div>
   </fieldset>
-  <p class="demo-erro" hidden>Preencha nome, empresa, WhatsApp e e-mail.</p>
+  <label class="pote" aria-hidden="true">Site<input name="site_url" tabindex="-1" autocomplete="off" /></label>
+  <p class="demo-erro" role="alert" hidden>Preencha nome, empresa, WhatsApp e e-mail.</p>
   <button type="submit" class="botao demo-botao">Solicitar demonstração</button>
   <p class="demo-nota">Seus dados ficam só com a Incorion e são usados apenas para este contato.</p>
+  <div class="demo-ok" role="status" hidden>
+    <p class="demo-titulo">Pedido recebido!</p>
+    <p>Obrigado. Nossa equipe vai falar com você pelo WhatsApp ou por e-mail para combinar a demonstração.</p>
+  </div>
 </form>
 
 <script is:inline>
   document.querySelectorAll('#form-demo').forEach((form) => {
-    form.addEventListener('submit', (e) => {
+    const botao = form.querySelector('.demo-botao');
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const d = Object.fromEntries(new FormData(form));
       const erro = form.querySelector('.demo-erro');
-      if (!d.nome || !d.empresa || !d.whatsapp || !d.email) { erro.hidden = false; return; }
+      const digitos = String(d.whatsapp || '').replace(/\D/g, '');
+      if (!d.nome || !d.empresa || digitos.length < 10 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(d.email || ''))) {
+        erro.textContent = 'Preencha nome, empresa, um WhatsApp com DDD e um e-mail válido.'; erro.hidden = false; return;
+      }
       erro.hidden = true;
-      const corpo = `Quero uma demonstração da Incorion.\n\nNome: ${d.nome}\nEmpresa: ${d.empresa}\nCargo: ${d.cargo || ''}\nWhatsApp: ${d.whatsapp}\nE-mail: ${d.email}\nCidade: ${d.cidade || ''}\nObras em andamento: ${d.obras || ''}\nInteresse: ${d.interesse}\n`;
-      location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Demonstração Incorion: ' + d.empresa)}&body=${encodeURIComponent(corpo)}`;
+      botao.disabled = true; botao.textContent = 'Enviando...';
+      try {
+        const r = await fetch(form.dataset.destino, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, pagina: location.pathname }) });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok || !j.ok) throw new Error(j.erro || 'falha');
+        form.querySelectorAll(':scope > :not(.demo-ok)').forEach((el) => { el.hidden = true; });
+        form.querySelector('.demo-ok').hidden = false;
+      } catch (falha) {
+        if (falha.message && falha.message !== 'falha' && falha.message !== 'Failed to fetch') { erro.textContent = falha.message; erro.hidden = false; }
+        else {
+          const corpo = `Quero uma demonstração da Incorion.\n\nNome: ${d.nome}\nEmpresa: ${d.empresa}\nCargo: ${d.cargo || ''}\nWhatsApp: ${d.whatsapp}\nE-mail: ${d.email}\nCidade: ${d.cidade || ''}\nObras em andamento: ${d.obras || ''}\nInteresse: ${d.interesse}\n`;
+          location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Demonstração Incorion: ' + d.empresa)}&body=${encodeURIComponent(corpo)}`;
+        }
+      } finally { botao.disabled = false; botao.textContent = 'Solicitar demonstração'; }
     });
   });
 </script>
@@ -62,6 +84,11 @@ const opcoes = [['Incorion', 'A plataforma'], ['Leo', 'O Leo'], ['Corretores', '
   .demo-interesse span { display: block; text-align: center; padding: 11px 6px; border-radius: 8px; font-weight: 500; transition: background-color var(--mov), color var(--mov); }
   .demo-interesse input:checked + span { background: var(--noite); color: var(--branco); }
   .demo-interesse input:focus-visible + span { outline: 3px solid var(--cobalto-texto); }
+  .pote { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .demo { position: relative; }
+  .demo [hidden] { display: none !important; }
+  .demo-ok p + p { margin-top: 10px; color: var(--grafite); font-size: var(--t-lead); }
+  .demo-botao:disabled { opacity: .7; cursor: wait; }
   .demo-erro { margin-top: 12px; color: #B42318; font-weight: 500; }
   .demo-botao { width: 100%; margin-top: 20px; }
   .demo-nota { margin-top: 12px; font-size: var(--t-pequeno); color: var(--grafite); }
