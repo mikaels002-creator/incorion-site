@@ -1,0 +1,182 @@
+---
+// Espelho de vendas ILUSTRATIVO e interativo (Residencial Aurora, Torre A, 8 andares x 4 unidades).
+import { MODULO_CORRETORES } from '../config';
+const vendidas = ['801','803','704','804','604','601','603','503','502','401','404','402','304','303','204','202','201','104','101'];
+const reservadas = ['802','703','504','301'];
+const unidades = [];
+for (let andar = 8; andar >= 1; andar--) {
+  for (let final = 1; final <= 4; final++) {
+    const id = `${andar}0${final}`;
+    const canto = final === 1 || final === 4;
+    const preco = (canto ? 742000 : 598000) + andar * 14000;
+    const status = vendidas.includes(id) ? 'vendida' : reservadas.includes(id) ? 'reservada' : 'livre';
+    unidades.push({ id, area: canto ? 92 : 74, preco, status });
+  }
+}
+const brl = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+const valorLivre = unidades.filter((u) => u.status === 'livre').reduce((s, u) => s + u.preco, 0);
+---
+<div class="esp-demo">
+  <div class="esp-palco">
+    <div class="espelho" id="espelho" data-filtro="todas">
+      <div class="esp-topo">
+        <span>Residencial Aurora · Torre A</span>
+        <span class="esp-legenda"><i class="l-livre"></i>Livre <i class="l-reservada"></i>Reservada <i class="l-vendida"></i>Vendida</span>
+      </div>
+      <div class="esp-grade">
+        {unidades.map((u) => (
+          <button type="button" class={`un ${u.status}`} data-id={u.id} data-area={u.area} data-preco={u.preco} data-status={u.status} aria-label={`Unidade ${u.id}, ${u.status}`}>
+            <span class="un-num">{u.id}</span>
+            <span class="un-preco">{u.status === 'vendida' ? 'Vendida' : brl(u.preco)}</span>
+          </button>
+        ))}
+      </div>
+      <div class="esp-info" aria-live="polite">
+        <span id="esp-detalhe">Toque numa unidade para ver os detalhes.</span>
+        <span>Estoque livre: <strong id="esp-valor">{brl(valorLivre)}</strong></span>
+      </div>
+      <div class="esp-leo" id="esp-leo" hidden><span class="quem">Leo</span><span id="esp-leo-texto"></span></div>
+    </div>
+    <p class="esp-aviso">Demonstração com dados fictícios.</p>
+  </div>
+  <div class="esp-controles">
+    <div class="bloco">
+      <h3>Filtre o estoque</h3>
+      <p>O espelho de vendas se atualiza a cada venda e a cada reserva.</p>
+      <div class="segmentado" role="group" aria-label="Filtrar unidades">
+        <button type="button" data-filtro="todas" aria-pressed="true">Todas</button>
+        <button type="button" data-filtro="livre" aria-pressed="false">Livres</button>
+        <button type="button" data-filtro="reservada" aria-pressed="false">Reservadas</button>
+        <button type="button" data-filtro="vendida" aria-pressed="false">Vendidas</button>
+      </div>
+    </div>
+    <div class="bloco">
+      <h3>Reajuste a tabela</h3>
+      <p>Todas as unidades livres ganham o preço novo na mesma hora.</p>
+      <label class="rotulo" for="reajuste">Reajuste: <strong id="reajuste-valor">0%</strong></label>
+      <input type="range" id="reajuste" min="0" max="10" step="0.5" value="0" />
+    </div>
+    <div class="bloco">
+      <h3>Reserve como corretor</h3>
+      <p>No {MODULO_CORRETORES}, o corretor reserva por 48 horas, pelo celular.</p>
+      <form class="reserva" id="form-reserva">
+        <label class="rotulo" for="corretor">Nome do corretor</label>
+        <div class="reserva-linha">
+          <input type="text" id="corretor" value="Ana Paula" autocomplete="off" />
+          <button type="submit" class="botao" id="btn-reserva">Reservar a 702</button>
+        </div>
+      </form>
+    </div>
+    <div class="bloco">
+      <h3>Receba o aviso do Leo</h3>
+      <button type="button" class="chave" role="switch" aria-checked="false" id="avisar">
+        <span class="chave-trilho"><span class="chave-bola"></span></span>
+        <span>Avisar a equipe no WhatsApp</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const brl = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    const espelho = document.getElementById('espelho');
+    if (!espelho) return;
+    const unidades = [...espelho.querySelectorAll('.un')];
+    const detalhe = document.getElementById('esp-detalhe');
+    const valor = document.getElementById('esp-valor');
+    const reajuste = document.getElementById('reajuste');
+    const leoBox = document.getElementById('esp-leo');
+    const leoTexto = document.getElementById('esp-leo-texto');
+    const avisar = document.getElementById('avisar');
+    let fator = 1, ultimo = '';
+    const preco = (u) => Math.round(Number(u.dataset.preco) * fator / 1000) * 1000;
+    const atualizar = () => {
+      let total = 0;
+      unidades.forEach((u) => { if (u.dataset.status === 'vendida') return; const p = preco(u); u.querySelector('.un-preco').textContent = brl(p); if (u.dataset.status === 'livre') total += p; });
+      valor.textContent = brl(total);
+    };
+    const avisarLeo = (t) => { ultimo = t; if (avisar.getAttribute('aria-checked') === 'true') { leoTexto.textContent = t; leoBox.hidden = false; } };
+    const mostrar = (u) => {
+      unidades.forEach((x) => x.classList.toggle('sel', x === u));
+      const extra = u.dataset.corretor ? ` por ${u.dataset.corretor}, vence em 48 h` : '';
+      detalhe.textContent = `Unidade ${u.dataset.id} · ${u.dataset.area} m² · ${u.dataset.status}${extra}` + (u.dataset.status !== 'vendida' ? ` · ${brl(preco(u))}` : '');
+    };
+    unidades.forEach((u) => u.addEventListener('click', () => mostrar(u)));
+    document.querySelectorAll('.segmentado button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('.segmentado button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      espelho.dataset.filtro = b.dataset.filtro;
+    }));
+    reajuste.addEventListener('input', () => {
+      fator = 1 + Number(reajuste.value) / 100;
+      document.getElementById('reajuste-valor').textContent = `${String(reajuste.value).replace('.', ',')}%`;
+      atualizar(); const s = espelho.querySelector('.un.sel'); if (s) mostrar(s);
+    });
+    document.getElementById('form-reserva').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nome = (document.getElementById('corretor').value || 'Corretor parceiro').trim();
+      const btn = document.getElementById('btn-reserva');
+      const u = unidades.find((x) => x.dataset.id === '702' && x.dataset.status === 'livre') || unidades.find((x) => x.dataset.status === 'livre');
+      if (!u) { btn.textContent = 'Sem unidades livres'; return; }
+      u.dataset.status = 'reservada'; u.dataset.corretor = nome;
+      u.classList.remove('livre'); u.classList.add('reservada', 'acabou');
+      atualizar(); mostrar(u);
+      avisarLeo(`A ${u.dataset.id} foi reservada por ${nome}. A reserva vence em 48 h.`);
+      const prox = unidades.find((x) => x.dataset.status === 'livre');
+      btn.textContent = prox ? `Reservar a ${prox.dataset.id}` : 'Sem unidades livres';
+    });
+    avisar.addEventListener('click', () => {
+      const on = avisar.getAttribute('aria-checked') !== 'true';
+      avisar.setAttribute('aria-checked', String(on));
+      if (on) avisarLeo(ultimo || 'Avisos ligados. Cada reserva e cada venda chegam no grupo Vendas Aurora.'); else leoBox.hidden = true;
+    });
+  })();
+</script>
+
+<style>
+  .esp-demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .esp-palco { position: sticky; top: 96px; }
+  .espelho { background: var(--noite); color: var(--concreto); border-radius: 16px; padding: 20px; font-size: 14px; }
+  .esp-topo { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; font-weight: 600; }
+  .esp-legenda { font-weight: 400; font-size: 13px; color: var(--suave-escuro); display: flex; align-items: center; gap: 6px; }
+  .esp-legenda i { width: 10px; height: 10px; border-radius: 2px; margin-left: 6px; display: inline-block; }
+  .l-livre { background: #fff; } .l-reservada { background: var(--cobalto-texto); } .l-vendida { background: var(--grafite); }
+  .esp-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .un { border: 0; border-radius: 6px; padding: 8px 6px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 2px; font: inherit; outline: 2px solid transparent; outline-offset: 1px; transition: opacity 200ms ease, transform 150ms ease; }
+  .un:hover { transform: translateY(-2px); }
+  .un.livre { background: #fff; color: var(--noite); }
+  .un.reservada { background: var(--cobalto-texto); color: #fff; }
+  .un.vendida { background: var(--grafite); color: #E2E6EC; }
+  .un.sel { outline-color: var(--leo); }
+  .un-num { font-weight: 700; }
+  .un-preco { font-size: 13px; font-variant-numeric: tabular-nums; }
+  [data-filtro='livre'] .un:not(.livre), [data-filtro='reservada'] .un:not(.reservada), [data-filtro='vendida'] .un:not(.vendida) { opacity: .15; }
+  .acabou { animation: reservou 700ms ease; }
+  @keyframes reservou { 30% { transform: scale(1.12); } }
+  .esp-info { margin-top: 14px; display: flex; flex-direction: column; gap: 4px; color: var(--suave-escuro); }
+  .esp-info strong { color: #fff; }
+  .esp-leo { margin-top: 12px; background: #fff; color: var(--noite); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .esp-leo[hidden] { display: none; }
+  .esp-leo .quem { color: var(--leo-texto); font-weight: 700; }
+  .esp-aviso { margin-top: 10px; font-size: var(--t-pequeno); color: var(--grafite); }
+  .esp-controles { display: grid; gap: 40px; }
+  .bloco h3 { font: 600 1.375rem/1.2 var(--f-titulo); letter-spacing: -0.02em; }
+  .bloco p { margin-top: 6px; color: var(--grafite); }
+  .rotulo { display: block; margin-top: 16px; font-weight: 500; }
+  .segmentado { display: inline-flex; flex-wrap: wrap; margin-top: 16px; background: var(--concreto); padding: 4px; border-radius: 10px; }
+  .segmentado button { font: 500 1rem/1 var(--f-texto); padding: 12px 14px; border: 0; border-radius: 8px; background: transparent; color: var(--noite); cursor: pointer; min-height: 44px; }
+  .segmentado button[aria-pressed='true'] { background: var(--noite); color: #fff; }
+  input[type='range'] { width: 100%; margin-top: 10px; accent-color: var(--cobalto-texto); height: 44px; }
+  .reserva-linha { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .reserva input { flex: 1; min-width: 160px; min-height: 52px; padding: 0 14px; font: 1rem var(--f-texto); border: 1px solid #C9CED6; border-radius: 8px; }
+  .chave { display: inline-flex; align-items: center; gap: 14px; margin-top: 14px; background: none; border: 0; padding: 0; font: 500 1rem var(--f-texto); color: var(--noite); cursor: pointer; min-height: 44px; }
+  .chave-trilho { width: 56px; height: 32px; background: var(--grafite); position: relative; border-radius: 99px; transition: background-color var(--mov); }
+  .chave-bola { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; background: #fff; border-radius: 50%; transition: transform var(--mov); }
+  .chave[aria-checked='true'] .chave-trilho { background: var(--cobalto-texto); }
+  .chave[aria-checked='true'] .chave-bola { transform: translateX(24px); }
+  @media (max-width: 900px) {
+    .esp-demo { grid-template-columns: 1fr; }
+    .esp-palco { position: static; }
+    .un-preco { font-size: 12px; }
+  }
+</style>

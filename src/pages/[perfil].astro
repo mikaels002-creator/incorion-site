@@ -1,0 +1,151 @@
+---
+import Base from '../layouts/Base.astro';
+import Demonstracao from '../components/Demonstracao.astro';
+import Espelho from '../components/Espelho.astro';
+import { PERFIS, MODULOS, FOTOS, foto } from '../config';
+
+export function getStaticPaths() {
+  return PERFIS.map((p) => ({ params: { perfil: p.slug }, props: { p } }));
+}
+const { p } = Astro.props;
+const fotoP = FOTOS[p.foto];
+const mods = MODULOS.filter((m) => p.modulos.includes(m.nome));
+const outros = PERFIS.filter((x) => x.slug !== p.slug);
+const interesse = p.slug === 'corretores' ? 'Corretores' : 'Incorion';
+---
+<Base titulo={p.titulo} descricao={p.texto}>
+  <section class="hero">
+    <img class="hero-foto" src={foto(fotoP.id, 2000)} alt={fotoP.alt} fetchpriority="high" />
+    <div class="recorte hero-conteudo">
+      <p class="trilha"><a href="/">Início</a> / {p.nome}</p>
+      <h1>{p.titulo}</h1>
+      <p class="hero-sub">{p.texto}</p>
+      <a class="botao" href="#contato">Solicite uma demonstração</a>
+    </div>
+  </section>
+
+  <section class="dores">
+    <div class="recorte">
+      <h2 data-reveal>O que muda na sua rotina</h2>
+      <div class="dores-grade">
+        {p.dores.map(([t, d]) => (
+          <article data-reveal>
+            <span class="laje" aria-hidden="true"></span>
+            <h3>{t}</h3>
+            <p>{d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {p.slug === 'corretores' && (
+    <section class="demo-espelho">
+      <div class="recorte">
+        <div class="cabeca-secao">
+          <h2 data-reveal>Experimente o espelho de vendas.</h2>
+          <p data-reveal>Filtre o estoque, reajuste a tabela, reserve uma unidade como corretor e veja o aviso do Leo.</p>
+        </div>
+        <Espelho />
+      </div>
+    </section>
+  )}
+
+  <section class="mods">
+    <div class="recorte">
+      <div class="cabeca-secao">
+        <h2 data-reveal>Módulos indicados</h2>
+        <p data-reveal>Comece por estes e ligue os outros quando quiser.</p>
+      </div>
+      <div class="mods-grade">
+        {mods.map((m) => (
+          <article data-reveal>
+            <h3>{m.nome}</h3>
+            <p>{m.texto}</p>
+            <div class="tela" aria-hidden="true">
+              <span class="tela-titulo">{m.tela}</span>
+              {m.linhas.map(([a, b]) => <span class="tela-linha"><span>{a}</span><strong>{b}</strong></span>)}
+            </div>
+          </article>
+        ))}
+      </div>
+      <p class="nota">Valores ilustrativos.</p>
+    </div>
+  </section>
+
+  <section class="contato" id="contato">
+    <div class="recorte contato-grade">
+      <div data-reveal>
+        <h2>Veja a Incorion com a realidade da sua empresa.</h2>
+        <p>Nossa equipe mostra os módulos funcionando com as suas obras, as suas vendas e o seu financeiro.</p>
+      </div>
+      <Demonstracao interesse={interesse} />
+    </div>
+  </section>
+
+  <section class="outros">
+    <div class="recorte">
+      <h2>Outros perfis</h2>
+      <div class="outros-grade">
+        {outros.map((o) => (
+          <a href={`/${o.slug}`}>
+            <h3>{o.nome}</h3>
+            <p>{o.resumo}</p>
+            <span>Saiba mais</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  section { padding-block: clamp(72px, 9vw, 120px); }
+  .cabeca-secao { max-width: 760px; margin-bottom: 40px; }
+  h2 { font-size: var(--t-h2); line-height: 1.08; }
+  .cabeca-secao p { margin-top: 14px; font-size: var(--t-lead); color: var(--grafite); }
+  h3 { font: 600 1.375rem/1.2 var(--f-titulo); letter-spacing: -0.02em; }
+
+  .hero { background: var(--noite); position: relative; color: var(--branco); padding-block: clamp(80px, 10vw, 140px); overflow: hidden; isolation: isolate; }
+  .hero-foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(14, 26, 51, .82); }
+  .trilha { font-size: var(--t-pequeno); color: var(--suave-escuro); margin-bottom: 20px; }
+  .trilha a { color: inherit; }
+  .hero h1 { font-size: clamp(2.25rem, 1.2rem + 3.4vw, 4rem); line-height: 1.04; letter-spacing: -0.035em; max-width: 16ch; }
+  .hero-sub { margin: 20px 0 32px; font-size: var(--t-lead); max-width: 38em; color: #E2E6EC; }
+
+  .dores h2 { margin-bottom: 40px; }
+  .dores-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .dores article { background: var(--concreto); border-radius: 16px; padding: 28px; }
+  .laje { display: block; width: 44px; height: 14px; background: var(--cobalto-texto); clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); margin-bottom: 20px; }
+  .dores p, .mods p { margin-top: 10px; color: var(--grafite); }
+
+  .demo-espelho { background: var(--branco); padding-top: 0; }
+
+  .mods { background: var(--concreto); }
+  .mods-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 16px; }
+  .mods article { background: var(--branco); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; }
+  .tela { margin-top: 18px; background: var(--noite); color: var(--concreto); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; font-size: var(--t-pequeno); }
+  .tela-titulo { font-weight: 600; margin-bottom: 6px; }
+  .tela-linha { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); }
+  .nota { margin-top: 16px; font-size: var(--t-pequeno); color: var(--grafite); }
+
+  .contato { background: var(--noite); color: var(--branco); }
+  .contato-grade { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+  .contato p { margin-top: 18px; font-size: var(--t-lead); color: #E2E6EC; max-width: 30em; }
+
+  .outros h2 { margin-bottom: 32px; }
+  .outros-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .outros a { display: block; text-decoration: none; background: var(--concreto); border-radius: 14px; padding: 24px; transition: transform var(--mov); }
+  .outros a:hover { transform: translateY(-3px); }
+  .outros p { margin-top: 8px; color: var(--grafite); }
+  .outros span { display: inline-block; margin-top: 14px; font-weight: 600; color: var(--cobalto-texto); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) [data-reveal] { opacity: 0; translate: 0 24px; transition: opacity 650ms cubic-bezier(.2, .7, .2, 1), translate 800ms cubic-bezier(.2, .7, .2, 1); }
+    :global(.js) [data-reveal].is-in { opacity: 1; translate: 0 0; }
+  }
+  @media (max-width: 900px) {
+    .dores-grade, .outros-grade, .contato-grade { grid-template-columns: 1fr; }
+  }
+</style>

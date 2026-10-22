@@ -1,0 +1,72 @@
+---
+// Formulário "Solicite uma demonstração". Por enquanto abre um e-mail pronto;
+// na etapa 3 passa a gravar no sistema (Supabase) e o Leo avisa no WhatsApp.
+import { SITE } from '../config';
+interface Props { interesse?: string }
+const { interesse = 'Incorion' } = Astro.props;
+const opcoes = [['Incorion', 'A plataforma'], ['Leo', 'O Leo'], ['Corretores', 'Corretores']];
+---
+<form class="demo" id="form-demo" novalidate data-email={SITE.email}>
+  <p class="demo-titulo">Solicite uma demonstração</p>
+  <p class="demo-sub">Preencha e a nossa equipe fala com você.</p>
+  <div class="demo-grade">
+    <label>Nome<input name="nome" required autocomplete="name" placeholder="Seu nome" /></label>
+    <label>Empresa<input name="empresa" required autocomplete="organization" placeholder="Nome da empresa" /></label>
+    <label>Cargo<input name="cargo" autocomplete="organization-title" placeholder="Diretor, sócio, gerente..." /></label>
+    <label>WhatsApp<input name="whatsapp" required type="tel" autocomplete="tel" placeholder="(47) 99999-0000" /></label>
+    <label>E-mail<input name="email" required type="email" autocomplete="email" placeholder="voce@empresa.com.br" /></label>
+    <label>Cidade<input name="cidade" autocomplete="address-level2" placeholder="Cidade, UF" /></label>
+    <label class="largo">Obras em andamento<input name="obras" type="number" min="0" inputmode="numeric" placeholder="Ex.: 3" /></label>
+  </div>
+  <fieldset class="demo-interesse">
+    <legend>O que mais interessa</legend>
+    <div>
+      {opcoes.map(([v, t]) => (
+        <label><input type="radio" name="interesse" value={v} checked={v === interesse} /><span>{t}</span></label>
+      ))}
+    </div>
+  </fieldset>
+  <p class="demo-erro" hidden>Preencha nome, empresa, WhatsApp e e-mail.</p>
+  <button type="submit" class="botao demo-botao">Solicitar demonstração</button>
+  <p class="demo-nota">Seus dados ficam só com a Incorion e são usados apenas para este contato.</p>
+</form>
+
+<script is:inline>
+  document.querySelectorAll('#form-demo').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(form));
+      const erro = form.querySelector('.demo-erro');
+      if (!d.nome || !d.empresa || !d.whatsapp || !d.email) { erro.hidden = false; return; }
+      erro.hidden = true;
+      const corpo = `Quero uma demonstração da Incorion.\n\nNome: ${d.nome}\nEmpresa: ${d.empresa}\nCargo: ${d.cargo || ''}\nWhatsApp: ${d.whatsapp}\nE-mail: ${d.email}\nCidade: ${d.cidade || ''}\nObras em andamento: ${d.obras || ''}\nInteresse: ${d.interesse}\n`;
+      location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Demonstração Incorion: ' + d.empresa)}&body=${encodeURIComponent(corpo)}`;
+    });
+  });
+</script>
+
+<style>
+  .demo { background: var(--branco); color: var(--noite); border-radius: 16px; padding: clamp(20px, 3vw, 36px); box-shadow: 0 24px 60px rgba(14, 26, 51, .18); }
+  .demo-titulo { font: 700 1.5rem/1.15 var(--f-titulo); letter-spacing: -0.02em; }
+  .demo-sub { margin-top: 6px; color: var(--grafite); }
+  .demo-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+  .demo-grade label { display: flex; flex-direction: column; gap: 6px; font-weight: 500; font-size: var(--t-pequeno); }
+  .largo { grid-column: span 2; }
+  .demo input:not([type='radio']) { font: 1rem var(--f-texto); padding: 12px 14px; border: 1px solid #C9CED6; border-radius: 8px; min-height: 48px; color: var(--noite); background: var(--branco); transition: border-color var(--mov); }
+  .demo input:not([type='radio']):focus { border-color: var(--cobalto-texto); outline: none; box-shadow: 0 0 0 3px rgba(47, 75, 224, .18); }
+  .demo-interesse { border: 0; padding: 0; margin: 18px 0 0; }
+  .demo-interesse legend { font-weight: 500; font-size: var(--t-pequeno); margin-bottom: 8px; }
+  .demo-interesse div { display: flex; gap: 4px; background: var(--concreto); border-radius: 10px; padding: 4px; }
+  .demo-interesse label { flex: 1; position: relative; }
+  .demo-interesse input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .demo-interesse span { display: block; text-align: center; padding: 11px 6px; border-radius: 8px; font-weight: 500; transition: background-color var(--mov), color var(--mov); }
+  .demo-interesse input:checked + span { background: var(--noite); color: var(--branco); }
+  .demo-interesse input:focus-visible + span { outline: 3px solid var(--cobalto-texto); }
+  .demo-erro { margin-top: 12px; color: #B42318; font-weight: 500; }
+  .demo-botao { width: 100%; margin-top: 20px; }
+  .demo-nota { margin-top: 12px; font-size: var(--t-pequeno); color: var(--grafite); }
+  @media (max-width: 560px) {
+    .demo-grade { grid-template-columns: 1fr; }
+    .largo { grid-column: auto; }
+  }
+</style>

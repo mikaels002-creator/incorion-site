@@ -7,7 +7,7 @@
   --leo: #FF6B1A;
   --leo-texto: #C2410C;
   --concreto: #EEF0F3;
-  --grafite: #556070;
+  --grafite: #475162;
   --branco: #FFFFFF;
   --suave-escuro: #B9C2D3;
 
@@ -26,7 +26,7 @@
   --t-texto: 1.0625rem;
   --t-pequeno: 0.9375rem;
 
-  --raio: 0px;
+  --raio: 8px;
   --mov: 220ms cubic-bezier(.2, .7, .2, 1);
 }
 
