@@ -1,0 +1,32 @@
+# Baixa as imagens geradas por IA (lista em scripts/imagens-para-baixar.json),
+# converte para JPG leve (1600 px) e grava no site. A Vercel publica sozinha depois.
+name: Baixar imagens do blog
+on:
+  push:
+    branches: [main]
+    paths: [scripts/imagens-para-baixar.json]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  baixar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar e converter
+        run: |
+          sudo apt-get install -y -qq imagemagick jq > /dev/null
+          jq -c '.[]' scripts/imagens-para-baixar.json | while read -r item; do
+            arq=$(echo "$item" | jq -r .arquivo); url=$(echo "$item" | jq -r .url)
+            [ -f "$arq" ] && continue
+            mkdir -p "$(dirname "$arq")"
+            curl -fsSL "$url" -o /tmp/original
+            convert /tmp/original -resize '1600x1600>' -strip -quality 80 -interlace Plane "$arq"
+            echo "ok: $arq"
+          done
+      - name: Gravar no site
+        run: |
+          git config user.name "Incorion (imagens)"
+          git config user.email "contato@incorion.com.br"
+          git add public/blog
+          git diff --cached --quiet || (git commit -m "Imagens do blog baixadas automaticamente" && git push)
