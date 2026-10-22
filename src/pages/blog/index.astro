@@ -1,50 +1,110 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { FOTOS, foto } from '../../config';
 
 const posts = (await getCollection('blog', ({ data }) => !data.rascunho))
   .sort((a, b) => b.data.data.valueOf() - a.data.data.valueOf());
-const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+const [destaque, ...resto] = posts;
+const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const FOTO_CATEGORIA = { 'Novidades': 'predio', 'Gestão': 'laje', 'Mercado e crédito': 'fachada', 'Corretores': 'entrega', 'Leo': 'grua' };
+const fotoDe = (p) => FOTOS[FOTO_CATEGORIA[p.data.categoria] ?? 'predio'];
+const temas = [
+  ['Gestão', 'Obras, caixa e rotina de uma incorporadora organizada.'],
+  ['Mercado e crédito', 'Juros, financiamento, CRI, debêntures e fundos.'],
+  ['Corretores', 'Como atender bem quem vende os seus imóveis.'],
+  ['Leo', 'Inteligência artificial no dia a dia da empresa.'],
+];
 ---
-<Base titulo="Blog" descricao="Gestão de incorporadoras, mercado, crédito imobiliário e as novidades da Incorion e do Leo.">
-  <section class="topo-blog">
+<Base titulo="Blog" descricao="Gestão de obras e incorporação, mercado e crédito imobiliário, e as novidades da Incorion e do Leo. Um texto novo toda terça-feira.">
+  <section class="topo">
     <div class="recorte">
+      <p class="trilha"><a href="/">Início</a> / Blog</p>
       <h1>Blog da Incorion</h1>
-      <p>Gestão de obras e incorporação, mercado e crédito imobiliário, e as novidades da plataforma e do Leo.</p>
+      <p class="sub">Gestão de obras e incorporação, mercado e crédito imobiliário, e as novidades da plataforma e do Leo. Um texto novo toda terça-feira.</p>
     </div>
   </section>
 
   <section class="lista">
     <div class="recorte">
-      {posts.length === 0 ? (
-        <p class="vazio">O primeiro post chega na próxima terça-feira.</p>
+      {destaque ? (
+        <>
+          <a class="destaque" href={`/blog/${destaque.id}`}>
+            <img src={foto(fotoDe(destaque).id, 1100, 700)} alt={fotoDe(destaque).alt} width="1100" height="700" />
+            <div>
+              <span class="cat">{destaque.data.categoria}</span>
+              <h2>{destaque.data.titulo}</h2>
+              <p>{destaque.data.resumo}</p>
+              <span class="meta">{fmt.format(destaque.data.data)} · por {destaque.data.autor}</span>
+            </div>
+          </a>
+          {resto.length > 0 && (
+            <ul class="grade">
+              {resto.map((p) => (
+                <li>
+                  <a href={`/blog/${p.id}`}>
+                    <img src={foto(fotoDe(p).id, 700, 440)} alt={fotoDe(p).alt} width="700" height="440" loading="lazy" />
+                    <span class="cat">{p.data.categoria}</span>
+                    <h3>{p.data.titulo}</h3>
+                    <span class="meta">{fmt.format(p.data.data)} · por {p.data.autor}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       ) : (
-        <ul>
-          {posts.map((p) => (
-            <li>
-              <a href={`/blog/${p.id}`}>
-                <span class="meta">{p.data.categoria} · {fmt.format(p.data.data)} · por {p.data.autor}</span>
-                <h2>{p.data.titulo}</h2>
-                <p>{p.data.resumo}</p>
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div class="vazio">
+          <h2>O primeiro texto chega na terça-feira.</h2>
+          <p>Enquanto isso, conheça a <a href="/">plataforma</a> ou o <a href="/leo">Leo</a>.</p>
+        </div>
       )}
+    </div>
+  </section>
+
+  <section class="temas">
+    <div class="recorte">
+      <h2>Sobre o que escrevemos</h2>
+      <ul>
+        {temas.map(([t, d]) => <li><strong>{t}</strong><span>{d}</span></li>)}
+      </ul>
     </div>
   </section>
 </Base>
 
 <style>
-  .topo-blog { background: var(--noite); color: var(--branco); padding-block: 96px 88px; }
-  .topo-blog h1 { font-size: var(--t-hero); line-height: .95; letter-spacing: -0.045em; }
-  .topo-blog p { margin-top: 28px; max-width: 32em; font-size: var(--t-frase); line-height: 1.35; color: var(--suave-escuro); }
-  .lista { padding-block: 96px var(--secao); }
-  .vazio { font-size: var(--t-frase); }
-  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 64px; }
-  li a { display: block; text-decoration: none; max-width: 52em; }
-  .meta { color: var(--grafite); font-size: var(--t-pequeno); }
-  li h2 { margin-top: 10px; font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem); transition: color var(--mov); }
-  li a:hover h2 { color: var(--cobalto-texto); }
-  li p { margin-top: 12px; }
+  .topo { background: var(--noite); color: var(--branco); padding-block: clamp(64px, 9vw, 112px); }
+  .trilha { font-size: var(--t-pequeno); color: var(--suave-escuro); margin-bottom: 20px; }
+  .trilha a { color: inherit; }
+  .topo h1 { font-size: clamp(2.5rem, 1.4rem + 3.6vw, 4.25rem); line-height: 1.02; letter-spacing: -0.035em; }
+  .sub { margin-top: 20px; font-size: var(--t-lead); color: #E2E6EC; max-width: 36em; }
+
+  .lista { padding-block: clamp(56px, 8vw, 96px); }
+  .cat { font-size: var(--t-pequeno); font-weight: 600; color: var(--cobalto-texto); }
+  .meta { font-size: var(--t-pequeno); color: var(--grafite); }
+  .destaque { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; text-decoration: none; }
+  .destaque img { width: 100%; height: auto; aspect-ratio: 11 / 7; object-fit: cover; border-radius: 14px; background: var(--concreto); }
+  .destaque h2 { margin-top: 10px; font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem); line-height: 1.1; transition: color var(--mov); }
+  .destaque p { margin: 14px 0 18px; font-size: var(--t-lead); color: var(--grafite); }
+  .destaque:hover h2, .grade a:hover h3 { color: var(--cobalto-texto); }
+  .grade { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 32px 24px; }
+  .grade a { display: flex; flex-direction: column; gap: 8px; text-decoration: none; }
+  .grade img { width: 100%; height: auto; aspect-ratio: 7 / 4.4; object-fit: cover; border-radius: 12px; background: var(--concreto); margin-bottom: 8px; }
+  .grade h3 { font: 600 1.375rem/1.2 var(--f-titulo); letter-spacing: -0.02em; transition: color var(--mov); }
+  .vazio h2 { font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem); }
+  .vazio p { margin-top: 12px; font-size: var(--t-lead); color: var(--grafite); }
+  .vazio a { color: var(--cobalto-texto); }
+
+  .temas { background: var(--concreto); padding-block: 72px; }
+  .temas h2 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); margin-bottom: 24px; }
+  .temas ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .temas li { background: var(--branco); border-radius: 12px; padding: 22px; display: grid; gap: 8px; }
+  .temas strong { font: 600 1.125rem var(--f-titulo); }
+  .temas span { color: var(--grafite); font-size: var(--t-pequeno); }
+
+  @media (max-width: 900px) {
+    .destaque { grid-template-columns: 1fr; }
+    .temas ul { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) { .temas ul { grid-template-columns: 1fr; } }
 </style>

@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /previa/
 
 Sitemap: https://incorion.com.br/sitemap-index.xml

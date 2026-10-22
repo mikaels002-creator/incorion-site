@@ -6,5 +6,5 @@ export default defineConfig({
   site: 'https://incorion.com.br',
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (pagina) => !pagina.includes('/previa/') })],
 });

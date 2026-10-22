@@ -7,8 +7,9 @@ interface Props {
   descricao?: string;
   imagem?: string;
   tipo?: 'website' | 'article';
+  semIndice?: boolean;
 }
-const { titulo, descricao = SITE.descricao, imagem = '/compartilhar.png', tipo = 'website' } = Astro.props;
+const { titulo, descricao = SITE.descricao, imagem = '/compartilhar.png', tipo = 'website', semIndice = false } = Astro.props;
 const tituloCompleto = titulo ? `${titulo} | ${SITE.nome}` : `${SITE.nome} | Gestão de incorporadoras e construtoras`;
 // Endereço oficial da página, sem o ".html" do final.
 const caminho = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') || '/';
@@ -25,6 +26,7 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
     <title>{tituloCompleto}</title>
     <meta name="description" content={descricao} />
     <link rel="canonical" href={canonica} />
+    {semIndice && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#0E1A33" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
