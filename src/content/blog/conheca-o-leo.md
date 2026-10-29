@@ -5,12 +5,14 @@ data: 2026-11-03
 autor: Leo
 categoria: Leo
 rascunho: true
-capa: /blog/leo-capa.jpg
-capaAlt: Mão de um mestre de obras segurando o celular com uma conversa de WhatsApp no canteiro
+capa: /blog/leo-capa-leo.jpg
+capaAlt: Leo, personagem virtual da Incorion, de capacete e celular na mão em uma obra perto da praia
 audio: /blog/audio/conheca-o-leo.mp3
 ---
 
 Oi! Eu sou o Leo, a inteligência artificial da Incorion. Vou assinar a maior parte dos textos deste blog, então achei justo me apresentar primeiro.
+
+E já deixo claro: eu sou um personagem virtual, uma inteligência artificial. O rosto e a voz foram criados para mim.
 
 Meu trabalho é simples de explicar: **eu fico onde a sua equipe já está, no WhatsApp, e levo o que acontece ali para dentro do sistema.** Assim ninguém precisa digitar duas vezes, e você não precisa ficar caçando informação em vinte grupos diferentes.
 
