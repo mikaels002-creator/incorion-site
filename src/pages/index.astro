@@ -39,7 +39,7 @@ const proximos = [
   <section class="leo" id="leo">
     <div class="recorte leo-grade">
       <div class="leo-texto" data-reveal>
-        <img class="leo-avatar" src="/marca/leo-avatar.svg" alt="" width="64" height="64" />
+        <img class="leo-avatar" src="/marca/leo-avatar.jpg" alt="" width="64" height="64" />
         <h2>Conheça o Leo, a IA do mercado imobiliário.</h2>
         <p>O Leo lê as mensagens dos grupos de WhatsApp da obra, lança as contas, cobra prazos, pede a sua aprovação e avisa a equipe. Você resolve o dia a dia sem abrir o sistema.</p>
         <ul class="lista-check">
@@ -50,7 +50,7 @@ const proximos = [
         <a class="botao laranja" href="#contato">Quero ver o Leo em ação</a>
       </div>
       <div class="conversa" data-reveal aria-label="Exemplo de conversa com o Leo, com dados fictícios">
-        <p class="conversa-topo"><img src="/marca/leo-avatar.svg" alt="" width="36" height="36" /><span><strong>Leo</strong><br />Incorion</span></p>
+        <p class="conversa-topo"><img src="/marca/leo-avatar.jpg" alt="" width="36" height="36" /><span><strong>Leo</strong><br />Incorion</span></p>
         <div class="msg recebida"><span class="quem">Mestre de obras</span>Chegou o boleto da concretagem da 6ª laje.<span class="anexo">boleto-concreteira.pdf</span></div>
         <div class="msg leo-msg"><span class="quem">Leo</span>Lancei no contas a pagar: Concreteira Vale Forte, R$ 18.400,00, vence 28/10, obra Residencial Aurora.</div>
         <div class="msg leo-msg"><span class="quem">Leo</span>Hoje são 3 contas para pagar, total R$ 37.770. Autoriza?</div>
@@ -263,7 +263,7 @@ const proximos = [
   /* Leo */
   .leo { background: var(--concreto); }
   .leo-grade { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
-  .leo-avatar { width: 56px; height: 56px; }
+  .leo-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
   .leo h2 { margin-top: 20px; font-size: var(--t-h2); line-height: 1.08; max-width: 18ch; }
   .leo-texto > p { margin-top: 18px; font-size: var(--t-lead); color: var(--grafite); max-width: 36em; }
   .lista-check { list-style: none; margin: 24px 0 32px; padding: 0; display: grid; gap: 12px; }
@@ -274,7 +274,7 @@ const proximos = [
   .botao.laranja:hover { background: #A8380A; }
   .conversa { background: #E3E7EE; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 10px; max-width: 460px; justify-self: end; width: 100%; box-shadow: 0 24px 60px rgba(14, 26, 51, .12); }
   .conversa-topo { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; font-size: var(--t-pequeno); line-height: 1.3; }
-  .conversa-topo img { width: 36px; height: 36px; }
+  .conversa-topo img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
   .msg { background: var(--branco); border-radius: 12px; padding: 10px 14px; max-width: 88%; display: flex; flex-direction: column; gap: 4px; font-size: var(--t-pequeno); line-height: 1.4; }
   .msg .quem { font-weight: 700; font-size: .875rem; color: #17663A; }
   .msg.leo-msg .quem { color: var(--leo-texto); }

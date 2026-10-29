@@ -28,7 +28,7 @@ const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 
           <p class="resumo">{d.resumo}</p>
           <div class="autor">
             {ehLeo
-              ? <img src="/marca/leo-avatar.svg" alt="" width="48" height="48" />
+              ? <img src="/marca/leo-avatar.jpg" alt="" width="48" height="48" />
               : <img src="/favicon.svg" alt="" width="48" height="48" class="simbolo" />}
             <div>
               <strong>{ehLeo ? 'Leo, a IA da Incorion' : 'Equipe Incorion'}</strong>
@@ -46,7 +46,7 @@ const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 
       <div class="corpo">
         {d.audio && (
           <div class="ouvir">
-            <img src="/marca/leo-avatar.svg" alt="" width="40" height="40" />
+            <img src="/marca/leo-avatar.jpg" alt="" width="40" height="40" />
             <div>
               <p><strong>Ouça o Leo</strong> resumir este texto</p>
               <audio controls preload="none" src={d.audio}></audio>

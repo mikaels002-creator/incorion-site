@@ -46,7 +46,7 @@ const interesse = m.nome === MODULO_CORRETORES ? 'Corretores' : 'Incorion';
 
   <section class="leo-faixa">
     <div class="recorte leo-faixa-grade">
-      <img src="/marca/leo-avatar.svg" alt="" width="72" height="72" />
+      <img src="/marca/leo-avatar.jpg" alt="" width="72" height="72" />
       <div>
         <h2>Com o Leo, o {m.nome} também funciona pelo WhatsApp.</h2>
         <p>O Leo, a inteligência artificial da Incorion, leva as informações deste módulo para o WhatsApp da sua equipe e traz de volta o que acontece no dia a dia.</p>
@@ -102,7 +102,7 @@ const interesse = m.nome === MODULO_CORRETORES ? 'Corretores' : 'Incorion';
 
   .leo-faixa { background: var(--concreto); padding-block: 64px; }
   .leo-faixa-grade { display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; }
-  .leo-faixa img { width: 72px; }
+  .leo-faixa img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
   .leo-faixa h2 { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.125rem); }
   .leo-faixa p { margin-top: 10px; color: var(--grafite); max-width: 48em; }
   .botao.laranja { background: var(--leo-texto); }
