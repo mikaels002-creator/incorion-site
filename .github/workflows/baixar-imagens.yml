@@ -1,5 +1,8 @@
-# Baixa as imagens e áudios gerados por IA (lista em scripts/imagens-para-baixar.json),
-# converte para JPG leve (1600 px) e grava no site. A Vercel publica sozinha depois.
+# Baixa imagens, áudios e vídeos listados em scripts/imagens-para-baixar.json e grava no site.
+# - pula o que já existe; um link vencido não derruba os outros
+# - só grava dentro de public/
+# - JPG vira 1600 px no máximo; MP4 é comprimido para a web
+# A Vercel publica sozinha depois da gravação.
 name: Baixar imagens do blog
 on:
   push:
@@ -8,29 +11,44 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: baixar-imagens
+  cancel-in-progress: false
 jobs:
   baixar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Baixar e converter
+        shell: bash
         run: |
+          set -uo pipefail
           sudo apt-get install -y -qq imagemagick jq ffmpeg > /dev/null
-          jq -c '.[]' scripts/imagens-para-baixar.json | while read -r item; do
-            arq=$(echo "$item" | jq -r .arquivo); url=$(echo "$item" | jq -r .url)
+          falhas=0
+          while read -r item; do
+            arq=$(jq -r .arquivo <<<"$item"); url=$(jq -r .url <<<"$item")
+            case "$arq" in public/*) ;; *) echo "::warning::caminho fora de public/: $arq"; continue ;; esac
+            case "$arq" in *..*|-*) echo "::warning::caminho inválido: $arq"; continue ;; esac
             [ -f "$arq" ] && continue
-            mkdir -p "$(dirname "$arq")"
-            curl -fsSL "$url" -o /tmp/original
+            mkdir -p -- "$(dirname -- "$arq")"
+            if ! curl -fsSL --retry 2 -o /tmp/original -- "$url"; then
+              echo "::warning::não baixou (link vencido?): $arq"; falhas=$((falhas+1)); continue
+            fi
             case "$arq" in
-              *.jpg) convert /tmp/original -resize '1600x1600>' -strip -quality 80 -interlace Plane "$arq" ;;
-              *.mp4) ffmpeg -loglevel error -y -i /tmp/original -an -vf "scale='min(1280,iw)':-2" -c:v libx264 -crf 26 -preset slow -movflags +faststart -pix_fmt yuv420p "$arq" ;;
-              *) cp /tmp/original "$arq" ;;
+              *.jpg) convert /tmp/original -resize '1600x1600>' -strip -quality 80 -interlace Plane -- "$arq" ;;
+              *.mp4) ffmpeg -loglevel error -y -i /tmp/original -an -vf "scale='min(1280,iw)':-2" -c:v libx264 -crf 26 -preset slow -movflags +faststart -pix_fmt yuv420p -- "$arq" ;;
+              *) cp /tmp/original -- "$arq" ;;
             esac
             echo "ok: $arq"
-          done
+          done < <(jq -c '.[]' scripts/imagens-para-baixar.json)
+          echo "falhas: $falhas"
       - name: Gravar no site
+        shell: bash
         run: |
           git config user.name "Incorion (imagens)"
           git config user.email "contato@incorion.com.br"
-          git add public/blog
-          git diff --cached --quiet || (git commit -m "Imagens do blog baixadas automaticamente" && git push)
+          git add public
+          git diff --cached --quiet && exit 0
+          git commit -m "Imagens do blog baixadas automaticamente"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push && exit 0; sleep 5; done
+          exit 1
