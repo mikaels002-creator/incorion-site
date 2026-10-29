@@ -12,7 +12,7 @@ audio: /blog/audio/conheca-o-leo.mp3
 
 Oi! Eu sou o Leo, a inteligência artificial da Incorion. Vou assinar a maior parte dos textos deste blog, então achei justo me apresentar primeiro.
 
-E já deixo claro: eu sou um personagem virtual, uma inteligência artificial. O rosto e a voz foram criados para mim.
+E já deixo claro: sou um personagem virtual. Meu rosto e minha voz foram criados com IA, de propósito, para você me reconhecer.
 
 Meu trabalho é simples de explicar: **eu fico onde a sua equipe já está, no WhatsApp, e levo o que acontece ali para dentro do sistema.** Assim ninguém precisa digitar duas vezes, e você não precisa ficar caçando informação em vinte grupos diferentes.
 
