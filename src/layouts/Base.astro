@@ -54,7 +54,7 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
     <header class="topo">
       <div class="recorte barra">
         <a href="/" class="marca" aria-label="Incorion, página inicial">
-          <img src="/marca/incorion-logo-horizontal-transparente-para-fundo-claro.svg" alt="Incorion" width="662" height="216" />
+          <img src="/marca/incorion-logo-horizontal-transparente-para-fundo-claro.svg" alt="Incorion" width="1538" height="329" />
         </a>
         <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu">
           <span></span><span></span><span></span>
@@ -87,7 +87,7 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
       <div class="recorte">
         <div class="rodape-grade">
           <div class="rodape-marca">
-            <img src="/marca/incorion-logo-horizontal-transparente-para-fundo-escuro.svg" alt="Incorion" width="662" height="216" loading="lazy" />
+            <img src="/marca/incorion-logo-horizontal-transparente-para-fundo-escuro.svg" alt="Incorion" width="1538" height="329" loading="lazy" />
             <p>{SITE.slogan} Gestão para incorporadoras e construtoras, do terreno às chaves.</p>
             <a class="botao" href="/#contato">Solicite uma demonstração</a>
           </div>
@@ -169,7 +169,7 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
 
   .topo { position: sticky; top: 0; z-index: 20; background: rgba(255, 255, 255, .97); color: var(--noite); box-shadow: 0 1px 0 rgba(14, 26, 51, .08); }
   .barra { display: flex; align-items: center; gap: 24px; min-height: 76px; }
-  .marca img { width: 136px; }
+  .marca img { width: 152px; height: auto; }
   .menu { display: flex; align-items: center; gap: 28px; margin-left: auto; }
   .menu-lista { list-style: none; display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; }
   .menu-item { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border-radius: 8px; border: 0; background: none; font: 500 1rem var(--f-texto); color: var(--noite); text-decoration: none; cursor: pointer; transition: background-color var(--mov), color var(--mov); }
@@ -206,7 +206,7 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
 
   .rodape { background: var(--noite); color: var(--branco); padding-block: 80px 28px; }
   .rodape-grade { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; }
-  .rodape-marca img { width: 140px; }
+  .rodape-marca img { width: 160px; height: auto; }
   .rodape-marca p { margin-top: 18px; color: var(--suave-escuro); max-width: 32ch; }
   .rodape-marca .botao { margin-top: 24px; }
   .rodape-titulo { font: 600 1rem var(--f-titulo); margin-bottom: 14px; }
