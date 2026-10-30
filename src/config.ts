@@ -24,8 +24,14 @@ export const FOTOS = {
   fachada: { id: 'photo-1758193431351-68538bf55ec3', autor: 'Aalo Lens', alt: 'Fachada de um prédio residencial moderno' },
   entrega: { id: 'photo-1758523671285-9ff3f4e0ff38', autor: 'Vitaly Gariev', alt: 'Casal recebendo as chaves do novo apartamento' },
 };
-export const foto = (id: string, w = 1600, h?: number) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&q=70&w=${w}${h ? `&h=${h}` : ''}`;
+// Fotos servidas pelo próprio site (public/fotos/<chave>-800.jpg e -1600.jpg, baixadas da Unsplash pelo robô).
+// Até 900 px usa a versão pequena; acima disso, a grande. O recorte fica por conta do CSS (object-fit).
+export const foto = (id: string, w = 1600, _h?: number) => {
+  const chave = Object.keys(FOTOS).find((k) => FOTOS[k as keyof typeof FOTOS].id === id) ?? 'predio';
+  return `/fotos/${chave}-${w <= 900 ? 800 : 1600}.jpg`;
+};
+// srcset pronto: celular baixa a pequena, tela grande baixa a grande.
+export const fotoSrcset = (id: string) => `${foto(id, 800)} 800w, ${foto(id, 1600)} 1600w`;
 
 // Nome PROVISÓRIO do módulo de corretores.
 // Quando o nome definitivo for escolhido, troque só esta linha.

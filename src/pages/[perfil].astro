@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Demonstracao from '../components/Demonstracao.astro';
 import Espelho from '../components/Espelho.astro';
-import { PERFIS, MODULOS, FOTOS, foto } from '../config';
+import { PERFIS, MODULOS, FOTOS, foto, fotoSrcset } from '../config';
 
 export function getStaticPaths() {
   return PERFIS.map((p) => ({ params: { perfil: p.slug }, props: { p } }));
@@ -15,7 +15,7 @@ const interesse = p.slug === 'corretores' ? 'Corretores' : 'Incorion';
 ---
 <Base titulo={p.titulo} descricao={p.texto}>
   <section class="hero">
-    <img class="hero-foto" src={foto(fotoP.id, 2000)} alt={fotoP.alt} fetchpriority="high" />
+    <img class="hero-foto" src={foto(fotoP.id, 1600)} srcset={fotoSrcset(fotoP.id)} sizes="100vw" alt={fotoP.alt} fetchpriority="high" />
     <div class="recorte hero-conteudo">
       <p class="trilha"><a href="/">Início</a> / {p.nome}</p>
       <h1>{p.titulo}</h1>

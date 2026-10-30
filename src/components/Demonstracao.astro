@@ -1,23 +1,42 @@
 ---
 // Formulário "Solicite uma demonstração".
 // Grava o pedido no sistema da Incorion (função inc-lead no Supabase) e o Leo avisa no WhatsApp.
-// Se a conexão falhar, abre um e-mail pronto como plano B.
+// Se o envio falhar, mostra o aviso na tela com a opção de tentar de novo ou mandar por e-mail.
 import { SITE } from '../config';
 interface Props { interesse?: string }
 const { interesse = 'Incorion' } = Astro.props;
-const opcoes = [['Incorion', 'A plataforma'], ['Leo', 'O Leo'], ['Corretores', 'Corretores']];
+const opcoes = [['Incorion', 'Plataforma'], ['Leo', 'O Leo'], ['Corretores', 'Corretores']];
+interface Campo { nome: string; rotulo: string; obrig: boolean; auto?: string; tipo?: 'text' | 'tel' | 'email' | 'number'; dica: string; erro?: string; largo?: boolean }
+const campos: Campo[] = [
+  { nome: 'nome', rotulo: 'Nome', obrig: true, auto: 'name', dica: 'Seu nome', erro: 'Escreva seu nome.' },
+  { nome: 'empresa', rotulo: 'Empresa', obrig: true, auto: 'organization', dica: 'Nome da empresa', erro: 'Escreva o nome da empresa.' },
+  { nome: 'cargo', rotulo: 'Cargo', obrig: false, auto: 'organization-title', dica: 'Diretor, sócio, gerente...' },
+  { nome: 'whatsapp', rotulo: 'WhatsApp', obrig: true, auto: 'tel', tipo: 'tel', dica: '(47) 99999-0000', erro: 'Escreva o WhatsApp com DDD.' },
+  { nome: 'email', rotulo: 'E-mail', obrig: true, auto: 'email', tipo: 'email', dica: 'voce@empresa.com.br', erro: 'Escreva um e-mail válido.' },
+  { nome: 'cidade', rotulo: 'Cidade', obrig: false, auto: 'address-level2', dica: 'Cidade, UF' },
+  { nome: 'obras', rotulo: 'Obras em andamento', obrig: false, tipo: 'number', dica: 'Ex.: 3', largo: true },
+];
 ---
 <form class="demo" id="form-demo" novalidate data-email={SITE.email} data-destino="https://kssprfrcardprazjzrta.supabase.co/functions/v1/inc-lead">
   <p class="demo-titulo">Solicite uma demonstração</p>
-  <p class="demo-sub">Preencha e a nossa equipe fala com você.</p>
+  <p class="demo-sub">Preencha e a nossa equipe fala com você. Campos com * são obrigatórios.</p>
   <div class="demo-grade">
-    <label>Nome<input name="nome" required autocomplete="name" placeholder="Seu nome" /></label>
-    <label>Empresa<input name="empresa" required autocomplete="organization" placeholder="Nome da empresa" /></label>
-    <label>Cargo<input name="cargo" autocomplete="organization-title" placeholder="Diretor, sócio, gerente..." /></label>
-    <label>WhatsApp<input name="whatsapp" required type="tel" autocomplete="tel" placeholder="(47) 99999-0000" /></label>
-    <label>E-mail<input name="email" required type="email" autocomplete="email" placeholder="voce@empresa.com.br" /></label>
-    <label>Cidade<input name="cidade" autocomplete="address-level2" placeholder="Cidade, UF" /></label>
-    <label class="largo">Obras em andamento<input name="obras" type="number" min="0" inputmode="numeric" placeholder="Ex.: 3" /></label>
+    {campos.map((c) => (
+      <label class={c.largo ? 'largo' : undefined}>
+        <span>{c.rotulo}{c.obrig ? <b class="obrig" aria-hidden="true"> *</b> : <span class="opc"> (opcional)</span>}</span>
+        <input
+          name={c.nome}
+          type={c.tipo ?? 'text'}
+          required={c.obrig}
+          autocomplete={c.auto}
+          placeholder={c.dica}
+          inputmode={c.tipo === 'number' ? 'numeric' : undefined}
+          min={c.tipo === 'number' ? 0 : undefined}
+          aria-describedby={c.erro ? `erro-${c.nome}` : undefined}
+        />
+        {c.erro && <span class="campo-erro" id={`erro-${c.nome}`} data-msg={c.erro} hidden></span>}
+      </label>
+    ))}
   </div>
   <fieldset class="demo-interesse">
     <legend>O que mais interessa</legend>
@@ -28,10 +47,15 @@ const opcoes = [['Incorion', 'A plataforma'], ['Leo', 'O Leo'], ['Corretores', '
     </div>
   </fieldset>
   <label class="pote" aria-hidden="true">Site<input name="site_url" tabindex="-1" autocomplete="off" /></label>
-  <p class="demo-erro" role="alert" hidden>Preencha nome, empresa, WhatsApp e e-mail.</p>
-  <button type="submit" class="botao demo-botao">Solicitar demonstração</button>
+  <div class="demo-erro" role="alert" hidden>
+    <p class="demo-erro-texto"></p>
+    <p class="demo-erro-plano" hidden>
+      Você também pode <a class="demo-mailto" href={`mailto:${SITE.email}`}>mandar o pedido por e-mail</a> para {SITE.email}.
+    </p>
+  </div>
+  <button type="submit" class="botao demo-botao">Solicite uma demonstração</button>
   <p class="demo-nota">Seus dados ficam só com a Incorion e são usados apenas para este contato.</p>
-  <div class="demo-ok" role="status" hidden>
+  <div class="demo-ok" role="status" tabindex="-1" hidden>
     <p class="demo-titulo">Pedido recebido!</p>
     <p>Obrigado. Nossa equipe vai falar com você pelo WhatsApp ou por e-mail para combinar a demonstração.</p>
   </div>
@@ -40,29 +64,69 @@ const opcoes = [['Incorion', 'A plataforma'], ['Leo', 'O Leo'], ['Corretores', '
 <script is:inline>
   document.querySelectorAll('#form-demo').forEach((form) => {
     const botao = form.querySelector('.demo-botao');
+    const textoBotao = botao.textContent;
+    const caixaErro = form.querySelector('.demo-erro');
+    const textoErro = form.querySelector('.demo-erro-texto');
+    const plano = form.querySelector('.demo-erro-plano');
+    const mailto = form.querySelector('.demo-mailto');
+    const regras = {
+      nome: (v) => v.trim().length > 0,
+      empresa: (v) => v.trim().length > 0,
+      whatsapp: (v) => v.replace(/\D/g, '').length >= 10,
+      email: (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim()),
+    };
+    const marcar = (nome, ok) => {
+      const campo = form.elements[nome];
+      const msg = form.querySelector('#erro-' + nome);
+      campo.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (msg) { msg.textContent = ok ? '' : msg.dataset.msg; msg.hidden = ok; }
+    };
+    Object.keys(regras).forEach((nome) => {
+      form.elements[nome].addEventListener('blur', (e) => { if (e.target.value) marcar(nome, regras[nome](e.target.value)); });
+      form.elements[nome].addEventListener('input', (e) => { if (e.target.getAttribute('aria-invalid') === 'true' && regras[nome](e.target.value)) marcar(nome, true); });
+    });
+    const mostrarErro = (texto, comPlanoB, d) => {
+      textoErro.textContent = texto;
+      plano.hidden = !comPlanoB;
+      if (comPlanoB && d) {
+        const corpo = `Quero uma demonstração da Incorion.\n\nNome: ${d.nome}\nEmpresa: ${d.empresa}\nCargo: ${d.cargo || ''}\nWhatsApp: ${d.whatsapp}\nE-mail: ${d.email}\nCidade: ${d.cidade || ''}\nObras em andamento: ${d.obras || ''}\nInteresse: ${d.interesse}\n`;
+        mailto.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Demonstração Incorion: ' + d.empresa)}&body=${encodeURIComponent(corpo)}`;
+      }
+      caixaErro.hidden = false;
+    };
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const d = Object.fromEntries(new FormData(form));
-      const erro = form.querySelector('.demo-erro');
-      const digitos = String(d.whatsapp || '').replace(/\D/g, '');
-      if (!d.nome || !d.empresa || digitos.length < 10 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(d.email || ''))) {
-        erro.textContent = 'Preencha nome, empresa, um WhatsApp com DDD e um e-mail válido.'; erro.hidden = false; return;
+      caixaErro.hidden = true;
+      let primeiroErrado = null;
+      Object.keys(regras).forEach((nome) => {
+        const ok = regras[nome](String(d[nome] || ''));
+        marcar(nome, ok);
+        if (!ok && !primeiroErrado) primeiroErrado = form.elements[nome];
+      });
+      if (primeiroErrado) {
+        mostrarErro('Confira os campos marcados em vermelho.', false);
+        primeiroErrado.focus();
+        return;
       }
-      erro.hidden = true;
       botao.disabled = true; botao.textContent = 'Enviando...';
       try {
         const r = await fetch(form.dataset.destino, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, pagina: location.pathname }) });
         const j = await r.json().catch(() => ({}));
-        if (!r.ok || !j.ok) throw new Error(j.erro || 'falha');
-        form.querySelectorAll(':scope > :not(.demo-ok)').forEach((el) => { el.hidden = true; });
-        form.querySelector('.demo-ok').hidden = false;
-      } catch (falha) {
-        if (falha.message && falha.message !== 'falha' && falha.message !== 'Failed to fetch') { erro.textContent = falha.message; erro.hidden = false; }
-        else {
-          const corpo = `Quero uma demonstração da Incorion.\n\nNome: ${d.nome}\nEmpresa: ${d.empresa}\nCargo: ${d.cargo || ''}\nWhatsApp: ${d.whatsapp}\nE-mail: ${d.email}\nCidade: ${d.cidade || ''}\nObras em andamento: ${d.obras || ''}\nInteresse: ${d.interesse}\n`;
-          location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Demonstração Incorion: ' + d.empresa)}&body=${encodeURIComponent(corpo)}`;
+        if (r.ok && j.ok) {
+          form.querySelectorAll(':scope > :not(.demo-ok)').forEach((el) => { el.hidden = true; });
+          const ok = form.querySelector('.demo-ok');
+          ok.hidden = false; ok.focus();
+          return;
         }
-      } finally { botao.disabled = false; botao.textContent = 'Solicitar demonstração'; }
+        // Erro explicado pelo sistema (ex.: muitos pedidos): mostra a mensagem e oferece o e-mail.
+        mostrarErro(j.erro || 'Não conseguimos registrar o pedido agora.', true, d);
+      } catch {
+        // Sem conexão (qualquer navegador): avisa e oferece tentar de novo ou mandar por e-mail.
+        mostrarErro('Não conseguimos enviar: parece que a conexão caiu. Tente de novo em instantes.', true, d);
+      } finally {
+        botao.disabled = false; botao.textContent = textoBotao;
+      }
     });
   });
 </script>
@@ -73,23 +137,30 @@ const opcoes = [['Incorion', 'A plataforma'], ['Leo', 'O Leo'], ['Corretores', '
   .demo-sub { margin-top: 6px; color: var(--grafite); }
   .demo-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
   .demo-grade label { display: flex; flex-direction: column; gap: 6px; font-weight: 500; font-size: var(--t-pequeno); }
+  .obrig { color: #B42318; }
+  .opc { color: var(--grafite); font-weight: 400; }
   .largo { grid-column: span 2; }
-  .demo input:not([type='radio']) { font: 1rem var(--f-texto); padding: 12px 14px; border: 1px solid #C9CED6; border-radius: 8px; min-height: 48px; color: var(--noite); background: var(--branco); transition: border-color var(--mov); }
-  .demo input:not([type='radio']):focus { border-color: var(--cobalto-texto); outline: none; box-shadow: 0 0 0 3px rgba(47, 75, 224, .18); }
+  .demo input:not([type='radio']) { font: 1rem var(--f-texto); padding: 12px 14px; border: 1px solid #7A8494; border-radius: 8px; min-height: 48px; color: var(--noite); background: var(--branco); transition: border-color var(--mov); }
+  .demo input:not([type='radio']):focus { border-color: var(--cobalto-texto); outline: 2px solid var(--cobalto-texto); outline-offset: 1px; }
+  .demo input[aria-invalid='true'] { border-color: #B42318; border-width: 2px; }
+  .campo-erro { color: #B42318; font-weight: 500; }
   .demo-interesse { border: 0; padding: 0; margin: 18px 0 0; }
   .demo-interesse legend { font-weight: 500; font-size: var(--t-pequeno); margin-bottom: 8px; }
   .demo-interesse div { display: flex; gap: 4px; background: var(--concreto); border-radius: 10px; padding: 4px; }
   .demo-interesse label { flex: 1; position: relative; }
   .demo-interesse input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .demo-interesse span { display: block; text-align: center; padding: 11px 6px; border-radius: 8px; font-weight: 500; transition: background-color var(--mov), color var(--mov); }
+  .demo-interesse span { display: block; text-align: center; padding: 11px 6px; border-radius: 8px; font-weight: 500; white-space: nowrap; transition: background-color var(--mov), color var(--mov); }
   .demo-interesse input:checked + span { background: var(--noite); color: var(--branco); }
   .demo-interesse input:focus-visible + span { outline: 3px solid var(--cobalto-texto); }
   .pote { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .demo { position: relative; }
   .demo [hidden] { display: none !important; }
+  .demo-ok:focus { outline: none; }
   .demo-ok p + p { margin-top: 10px; color: var(--grafite); font-size: var(--t-lead); }
   .demo-botao:disabled { opacity: .7; cursor: wait; }
-  .demo-erro { margin-top: 12px; color: #B42318; font-weight: 500; }
+  .demo-erro { margin-top: 14px; padding: 12px 14px; border-radius: 8px; background: #FEF3F2; color: #912018; font-weight: 500; }
+  .demo-erro-plano { margin-top: 6px; font-weight: 400; }
+  .demo-erro a { color: inherit; text-decoration: underline; }
   .demo-botao { width: 100%; margin-top: 20px; }
   .demo-nota { margin-top: 12px; font-size: var(--t-pequeno); color: var(--grafite); }
   @media (max-width: 560px) {

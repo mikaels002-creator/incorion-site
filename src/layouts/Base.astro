@@ -1,4 +1,11 @@
 ---
+// Fontes da marca servidas pelo próprio site (sem chamar o Google a cada visita).
+import '@fontsource/archivo/latin-500.css';
+import '@fontsource/archivo/latin-600.css';
+import '@fontsource/archivo/latin-700.css';
+import '@fontsource/instrument-sans/latin-400.css';
+import '@fontsource/instrument-sans/latin-500.css';
+import '@fontsource/instrument-sans/latin-600.css';
 import '../styles/global.css';
 import { SITE, NAV, PERFIS, MODULOS, FOTOS, slugModulo } from '../config';
 
@@ -25,7 +32,7 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{tituloCompleto}</title>
     <meta name="description" content={descricao} />
-    <link rel="canonical" href={canonica} />
+    {!semIndice && <link rel="canonical" href={canonica} />}
     {semIndice && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#0E1A33" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -39,10 +46,6 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
     <meta property="og:url" content={canonica} />
     <meta property="og:image" content={imagemUrl} />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap" />
     <script is:inline>document.documentElement.classList.add('js')</script>
     <slot name="head" />
   </head>
@@ -129,24 +132,31 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
       (() => {
         const botao = document.querySelector('.menu-botao');
         const menu = document.getElementById('menu');
-        botao.addEventListener('click', () => {
-          const aberto = botao.getAttribute('aria-expanded') !== 'true';
+        const subs = () => document.querySelectorAll('.tem-sub > button');
+        const abrirMenu = (aberto) => {
           botao.setAttribute('aria-expanded', String(aberto));
+          botao.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
           menu.classList.toggle('aberto', aberto);
           document.body.classList.toggle('travado', aberto);
-        });
-        menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
-          botao.setAttribute('aria-expanded', 'false'); menu.classList.remove('aberto'); document.body.classList.remove('travado');
-        }));
-        document.querySelectorAll('.tem-sub > button').forEach((b) => {
+        };
+        botao.addEventListener('click', () => abrirMenu(botao.getAttribute('aria-expanded') !== 'true'));
+        menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => abrirMenu(false)));
+        subs().forEach((b) => {
           b.addEventListener('click', (e) => {
             e.stopPropagation();
             const aberto = b.getAttribute('aria-expanded') !== 'true';
-            document.querySelectorAll('.tem-sub > button').forEach((x) => x.setAttribute('aria-expanded', 'false'));
+            subs().forEach((x) => x.setAttribute('aria-expanded', 'false'));
             b.setAttribute('aria-expanded', String(aberto));
           });
         });
-        document.addEventListener('click', () => document.querySelectorAll('.tem-sub > button').forEach((x) => x.setAttribute('aria-expanded', 'false')));
+        document.addEventListener('click', () => subs().forEach((x) => x.setAttribute('aria-expanded', 'false')));
+        // Esc fecha o submenu aberto e, no celular, o menu inteiro.
+        document.addEventListener('keydown', (e) => {
+          if (e.key !== 'Escape') return;
+          const sub = [...subs()].find((x) => x.getAttribute('aria-expanded') === 'true');
+          if (sub) { sub.setAttribute('aria-expanded', 'false'); sub.focus(); return; }
+          if (botao.getAttribute('aria-expanded') === 'true') { abrirMenu(false); botao.focus(); }
+        });
       })();
     </script>
     <script is:inline src="/js/movimento.js" defer></script>
@@ -183,8 +193,8 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
 
   @media (max-width: 1080px) {
     .menu-botao { display: flex; }
-    .menu { position: fixed; inset: 76px 0 0 0; background: var(--branco); flex-direction: column; align-items: stretch; gap: 24px; padding: 16px var(--margem) 32px; overflow-y: auto; opacity: 0; pointer-events: none; transform: translateY(-8px); transition: opacity var(--mov), transform var(--mov); }
-    .menu.aberto { opacity: 1; pointer-events: auto; transform: none; }
+    .menu { position: fixed; inset: 76px 0 0 0; background: var(--branco); flex-direction: column; align-items: stretch; gap: 24px; padding: 16px var(--margem) 32px; overflow-y: auto; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-8px); transition: opacity var(--mov), transform var(--mov), visibility 0s linear var(--dur, 220ms); }
+    .menu.aberto { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity var(--mov), transform var(--mov), visibility 0s; }
     .menu-lista { flex-direction: column; align-items: stretch; gap: 0; }
     .menu-item { width: 100%; justify-content: space-between; padding: 16px 4px; font-size: 1.125rem; border-radius: 0; }
     .menu-item:hover { background: none; }
@@ -201,8 +211,8 @@ const autores = [...new Set(Object.values(FOTOS).map((f) => f.autor))].join(', '
   .rodape-marca .botao { margin-top: 24px; }
   .rodape-titulo { font: 600 1rem var(--f-titulo); margin-bottom: 14px; }
   .rodape-titulo.segundo { margin-top: 28px; }
-  .rodape ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .rodape ul a { color: var(--suave-escuro); text-decoration: none; transition: color var(--mov); }
+  .rodape ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .rodape ul a { display: inline-block; padding: 9px 0; color: var(--suave-escuro); text-decoration: none; transition: color var(--mov); }
   .rodape ul a:hover { color: var(--branco); }
   .rodape-meta { margin-top: 64px; padding-top: 24px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: var(--t-pequeno); color: var(--suave-escuro); }
   @media (max-width: 900px) {

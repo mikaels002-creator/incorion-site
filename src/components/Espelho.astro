@@ -3,7 +3,7 @@
 import { MODULO_CORRETORES } from '../config';
 const vendidas = ['801','803','704','804','604','601','603','503','502','401','404','402','304','303','204','202','201','104','101'];
 const reservadas = ['802','703','504','301'];
-const unidades = [];
+const unidades: { id: string; area: number; preco: number; status: string }[] = [];
 for (let andar = 8; andar >= 1; andar--) {
   for (let final = 1; final <= 4; final++) {
     const id = `${andar}0${final}`;
@@ -13,7 +13,9 @@ for (let andar = 8; andar >= 1; andar--) {
     unidades.push({ id, area: canto ? 92 : 74, preco, status });
   }
 }
-const brl = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+const brl = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+// Preço curto para caber na grade do celular (ex.: R$ 710 mil); o valor completo aparece no detalhe.
+const curto = (n: number) => `R$ ${Math.round(n / 1000)} mil`;
 const valorLivre = unidades.filter((u) => u.status === 'livre').reduce((s, u) => s + u.preco, 0);
 ---
 <div class="esp-demo">
@@ -27,12 +29,12 @@ const valorLivre = unidades.filter((u) => u.status === 'livre').reduce((s, u) =>
         {unidades.map((u) => (
           <button type="button" class={`un ${u.status}`} data-id={u.id} data-area={u.area} data-preco={u.preco} data-status={u.status} aria-label={`Unidade ${u.id}, ${u.status}`}>
             <span class="un-num">{u.id}</span>
-            <span class="un-preco">{u.status === 'vendida' ? 'Vendida' : brl(u.preco)}</span>
+            <span class="un-preco">{u.status === 'vendida' ? 'Vendida' : curto(u.preco)}</span>
           </button>
         ))}
       </div>
       <div class="esp-info" aria-live="polite">
-        <span id="esp-detalhe">Toque numa unidade para ver os detalhes.</span>
+        <span id="esp-detalhe">Escolha uma unidade para ver os detalhes.</span>
         <span>Estoque livre: <strong id="esp-valor">{brl(valorLivre)}</strong></span>
       </div>
       <div class="esp-leo" id="esp-leo" hidden><span class="quem">Leo</span><span id="esp-leo-texto"></span></div>
@@ -90,10 +92,11 @@ const valorLivre = unidades.filter((u) => u.status === 'livre').reduce((s, u) =>
     const leoTexto = document.getElementById('esp-leo-texto');
     const avisar = document.getElementById('avisar');
     let fator = 1, ultimo = '';
+    const curto = (n) => `R$ ${Math.round(n / 1000)} mil`;
     const preco = (u) => Math.round(Number(u.dataset.preco) * fator / 1000) * 1000;
     const atualizar = () => {
       let total = 0;
-      unidades.forEach((u) => { if (u.dataset.status === 'vendida') return; const p = preco(u); u.querySelector('.un-preco').textContent = brl(p); if (u.dataset.status === 'livre') total += p; });
+      unidades.forEach((u) => { if (u.dataset.status === 'vendida') return; const p = preco(u); u.querySelector('.un-preco').textContent = curto(p); if (u.dataset.status === 'livre') total += p; });
       valor.textContent = brl(total);
     };
     const avisarLeo = (t) => { ultimo = t; if (avisar.getAttribute('aria-checked') === 'true') { leoTexto.textContent = t; leoBox.hidden = false; } };
@@ -119,6 +122,7 @@ const valorLivre = unidades.filter((u) => u.status === 'livre').reduce((s, u) =>
       const u = unidades.find((x) => x.dataset.id === '702' && x.dataset.status === 'livre') || unidades.find((x) => x.dataset.status === 'livre');
       if (!u) { btn.textContent = 'Sem unidades livres'; return; }
       u.dataset.status = 'reservada'; u.dataset.corretor = nome;
+      u.setAttribute('aria-label', `Unidade ${u.dataset.id}, reservada por ${nome}`);
       u.classList.remove('livre'); u.classList.add('reservada', 'acabou');
       atualizar(); mostrar(u);
       avisarLeo(`A ${u.dataset.id} foi reservada por ${nome}. A reserva vence em 48 h.`);
@@ -139,17 +143,17 @@ const valorLivre = unidades.filter((u) => u.status === 'livre').reduce((s, u) =>
   .espelho { background: var(--noite); color: var(--concreto); border-radius: 16px; padding: 20px; font-size: 14px; }
   .esp-topo { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; font-weight: 600; }
   .esp-legenda { font-weight: 400; font-size: 13px; color: var(--suave-escuro); display: flex; align-items: center; gap: 6px; }
-  .esp-legenda i { width: 10px; height: 10px; border-radius: 2px; margin-left: 6px; display: inline-block; }
+  .esp-legenda i { width: 12px; height: 12px; border-radius: 2px; margin-left: 6px; display: inline-block; box-shadow: 0 0 0 1px rgba(255, 255, 255, .85); }
   .l-livre { background: #fff; } .l-reservada { background: var(--cobalto-texto); } .l-vendida { background: var(--grafite); }
-  .esp-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .un { border: 0; border-radius: 6px; padding: 8px 6px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 2px; font: inherit; outline: 2px solid transparent; outline-offset: 1px; transition: opacity 200ms ease, transform 150ms ease; }
+  .esp-grade { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .un { min-width: 0; border: 0; border-radius: 6px; padding: 8px 6px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 2px; font: inherit; outline: 2px solid transparent; outline-offset: 1px; transition: opacity 200ms ease, transform 150ms ease; }
   .un:hover { transform: translateY(-2px); }
   .un.livre { background: #fff; color: var(--noite); }
   .un.reservada { background: var(--cobalto-texto); color: #fff; }
-  .un.vendida { background: var(--grafite); color: #E2E6EC; }
+  .un.vendida { background: var(--grafite); color: #E2E6EC; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); }
   .un.sel { outline-color: var(--leo); }
   .un-num { font-weight: 700; }
-  .un-preco { font-size: 13px; font-variant-numeric: tabular-nums; }
+  .un-preco { font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   [data-filtro='livre'] .un:not(.livre), [data-filtro='reservada'] .un:not(.reservada), [data-filtro='vendida'] .un:not(.vendida) { opacity: .15; }
   .acabou { animation: reservou 700ms ease; }
   @keyframes reservou { 30% { transform: scale(1.12); } }
@@ -168,15 +172,19 @@ const valorLivre = unidades.filter((u) => u.status === 'livre').reduce((s, u) =>
   .segmentado button[aria-pressed='true'] { background: var(--noite); color: #fff; }
   input[type='range'] { width: 100%; margin-top: 10px; accent-color: var(--cobalto-texto); height: 44px; }
   .reserva-linha { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-  .reserva input { flex: 1; min-width: 160px; min-height: 52px; padding: 0 14px; font: 1rem var(--f-texto); border: 1px solid #C9CED6; border-radius: 8px; }
+  .reserva input { flex: 1; min-width: 160px; min-height: 52px; padding: 0 14px; font: 1rem var(--f-texto); border: 1px solid #7A8494; border-radius: 8px; }
   .chave { display: inline-flex; align-items: center; gap: 14px; margin-top: 14px; background: none; border: 0; padding: 0; font: 500 1rem var(--f-texto); color: var(--noite); cursor: pointer; min-height: 44px; }
   .chave-trilho { width: 56px; height: 32px; background: var(--grafite); position: relative; border-radius: 99px; transition: background-color var(--mov); }
   .chave-bola { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; background: #fff; border-radius: 50%; transition: transform var(--mov); }
   .chave[aria-checked='true'] .chave-trilho { background: var(--cobalto-texto); }
   .chave[aria-checked='true'] .chave-bola { transform: translateX(24px); }
   @media (max-width: 900px) {
-    .esp-demo { grid-template-columns: 1fr; }
-    .esp-palco { position: static; }
+    .esp-demo { grid-template-columns: minmax(0, 1fr); }
+    .esp-palco { position: static; min-width: 0; }
+    .espelho { padding: 14px; }
+    .un { padding: 7px 5px; }
     .un-preco { font-size: 12px; }
+    .reserva input { min-width: 0; }
+    .reserva-linha .botao { flex: 1 1 100%; }
   }
 </style>

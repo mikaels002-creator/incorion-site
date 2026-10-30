@@ -2,20 +2,18 @@
 // Página de um post do blog. Usada no post publicado e na prévia de aprovação.
 import Base from '../layouts/Base.astro';
 import Demonstracao from './Demonstracao.astro';
-import { FOTOS, foto } from '../config';
+import { capaDoPost, dataDoPost, type Post } from '../lib/blog';
 
+interface Props { post: Post; Content: any; previa?: boolean; outros?: Post[] }
 const { post, Content, previa = false, outros = [] } = Astro.props;
 const d = post.data;
-const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-const FOTO_CATEGORIA = { 'Novidades': 'predio', 'Gestão': 'laje', 'Mercado e crédito': 'fachada', 'Corretores': 'entrega', 'Leo': 'grua' };
-const f = FOTOS[FOTO_CATEGORIA[d.categoria] ?? 'predio'];
-const capaSrc = d.capa ?? foto(f.id, 900, 700);
-const capaAlt = d.capaAlt ?? f.alt;
+const fmt = dataDoPost;
+const { src: capaSrc, alt: capaAlt } = capaDoPost(post, 900, 700);
 const ehLeo = d.autor === 'Leo';
 const minutos = Math.max(1, Math.round((post.body ?? '').split(/\s+/).length / 200));
 const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 'Incorion';
 ---
-<Base titulo={d.titulo} descricao={d.resumo} tipo="article" semIndice={previa}>
+<Base titulo={d.titulo} descricao={d.resumo} tipo="article" semIndice={previa} imagem={d.capa}>
   {previa && (
     <p class="aviso-previa">Prévia para aprovação. Este post ainda não está publicado e não aparece no Google.</p>
   )}
@@ -37,7 +35,14 @@ const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 
           </div>
         </div>
         {d.video
-          ? <video class="capa" src={d.video} poster={capaSrc} autoplay muted loop playsinline aria-label={capaAlt} width="1600" height="893"></video>
+          ? (
+            <figure class="capa-video">
+              <video class="capa" src={d.video} poster={capaSrc} muted loop playsinline preload="metadata" aria-label={capaAlt} width="1600" height="893" data-capa-video></video>
+              <button type="button" class="capa-pausa" data-capa-botao aria-label="Pausar vídeo">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pausa" d="M7 5h4v14H7zM13 5h4v14h-4z" /><path class="i-play" d="M8 5v14l11-7z" /></svg>
+              </button>
+            </figure>
+          )
           : <img class="capa" src={capaSrc} alt={capaAlt} width="1600" height="893" loading="eager" />}
       </div>
     </header>
@@ -49,7 +54,7 @@ const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 
             <img src="/marca/leo-avatar.jpg" alt="" width="40" height="40" />
             <div>
               <p><strong>Ouça o Leo</strong> resumir este texto</p>
-              <audio controls preload="none" src={d.audio}></audio>
+              <audio controls preload="none" src={d.audio} aria-label={`Ouça o Leo resumir: ${d.titulo}`}></audio>
             </div>
           </div>
         )}
@@ -59,7 +64,7 @@ const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 
         <div class="cartao">
           <p class="cartao-titulo">Gestão completa para quem incorpora</p>
           <p>Financeiro, obras, compras, vendas e contratos em um só lugar, com o Leo no WhatsApp da sua equipe.</p>
-          <a class="botao" href="#contato">Pedir demonstração</a>
+          <a class="botao" href="#contato">Solicite uma demonstração</a>
         </div>
       </aside>
     </div>
@@ -89,6 +94,17 @@ const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 
   </section>
 </Base>
 
+<script is:inline>
+  // Vídeo da capa: só toca sozinho se a pessoa não pediu "reduzir movimento"; sempre tem botão de pausa.
+  document.querySelectorAll('[data-capa-video]').forEach((v) => {
+    const b = v.parentElement.querySelector('[data-capa-botao]');
+    const marcar = () => { const parado = v.paused; b.classList.toggle('parado', parado); b.setAttribute('aria-label', parado ? 'Reproduzir vídeo' : 'Pausar vídeo'); };
+    v.addEventListener('play', marcar); v.addEventListener('pause', marcar);
+    b.addEventListener('click', () => (v.paused ? v.play() : v.pause()));
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) v.play().catch(marcar); else marcar();
+  });
+</script>
+
 <style>
   .aviso-previa { background: #FFF4E5; color: #7A3A06; text-align: center; padding: 12px var(--margem); font-weight: 600; font-size: var(--t-pequeno); }
   .cabeca { background: var(--noite); color: var(--branco); padding-block: clamp(56px, 8vw, 96px); }
@@ -102,7 +118,12 @@ const interesse = d.categoria === 'Corretores' ? 'Corretores' : ehLeo ? 'Leo' : 
   .autor .simbolo { background: var(--branco); padding: 8px; }
   .autor strong { display: block; }
   .autor span { font-size: var(--t-pequeno); color: var(--suave-escuro); }
-  .capa { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 14px; background: #1B2A4A; }
+  .capa { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 14px; background: #1B2A4A; }
+  .capa-video { position: relative; margin: 0; }
+  .capa-pausa { position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(14, 26, 51, .72); color: #fff; cursor: pointer; display: grid; place-items: center; }
+  .capa-pausa svg { width: 20px; height: 20px; fill: currentColor; }
+  .capa-pausa .i-play, .capa-pausa.parado .i-pausa { display: none; }
+  .capa-pausa.parado .i-play { display: inline; }
 
   .corpo-grade { display: grid; grid-template-columns: minmax(0, 44em) 300px; justify-content: space-between; gap: 64px; padding-block: clamp(56px, 8vw, 96px); }
   .corpo :global(p), .corpo :global(li) { font-size: 1.125rem; line-height: 1.7; color: #1F2A3D; }

@@ -1,0 +1,37 @@
+# Publicação agendada: toda terça às 9h (Brasília) o site é gerado de novo.
+# Post aprovado (rascunho: false) com a data de hoje ou anterior entra no ar sozinho.
+# Só cria o "commit vazio" (que faz a Vercel publicar) quando há post do dia aprovado.
+name: Publicar posts agendados
+on:
+  schedule:
+    - cron: "0 12 * * 2"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: baixar-imagens
+  cancel-in-progress: false
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tem post aprovado para hoje?
+        id: ver
+        shell: bash
+        run: |
+          hoje=$(TZ=America/Sao_Paulo date +%F)
+          n=0
+          for f in src/content/blog/*.md; do
+            if ! grep -q "^rascunho: true" "$f" && grep -q "^data: $hoje" "$f"; then echo "sai hoje: $f"; n=$((n+1)); fi
+          done
+          echo "n=$n" >> "$GITHUB_OUTPUT"
+      - name: Publicar
+        if: steps.ver.outputs.n != '0'
+        shell: bash
+        run: |
+          git config user.name "Incorion (publicação)"
+          git config user.email "contato@incorion.com.br"
+          git commit --allow-empty -m "Publicação agendada de terça"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push && exit 0; sleep 5; done
+          exit 1

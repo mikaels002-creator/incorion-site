@@ -1,16 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getCollection } from 'astro:content';
-import { FOTOS, foto } from '../../config';
+import { postsPublicados, capaDoPost, dataDoPost, type Post } from '../../lib/blog';
 
-const posts = (await getCollection('blog', ({ data }) => !data.rascunho))
-  .sort((a, b) => b.data.data.valueOf() - a.data.data.valueOf());
+const posts = await postsPublicados();
 const [destaque, ...resto] = posts;
-const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-const FOTO_CATEGORIA = { 'Novidades': 'predio', 'Gestão': 'laje', 'Mercado e crédito': 'fachada', 'Corretores': 'entrega', 'Leo': 'grua' };
-const fotoPadrao = (p) => FOTOS[FOTO_CATEGORIA[p.data.categoria] ?? 'predio'];
-const img = (p, w, h) => p.data.capa ?? foto(fotoPadrao(p).id, w, h);
-const alt = (p) => p.data.capaAlt ?? fotoPadrao(p).alt;
+const fmt = dataDoPost;
+const img = (p: Post, w: number, h: number) => capaDoPost(p, w, h).src;
+const alt = (p: Post) => capaDoPost(p).alt;
 const temas = [
   ['Gestão', 'Obras, caixa e rotina de uma incorporadora organizada.'],
   ['Mercado e crédito', 'Juros, financiamento, CRI, debêntures e fundos.'],

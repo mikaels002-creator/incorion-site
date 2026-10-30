@@ -2,24 +2,21 @@
 import Base from '../layouts/Base.astro';
 import Demonstracao from '../components/Demonstracao.astro';
 import Plataforma from '../components/Plataforma.astro';
-import { getCollection } from 'astro:content';
-import { MODULOS, PERFIS, FAQ, FOTOS, foto, slugModulo } from '../config';
+import { postsPublicados, dataDoPost } from '../lib/blog';
+import { MODULOS, PERFIS, FAQ, FOTOS, foto, fotoSrcset, slugModulo } from '../config';
 
-const posts = (await getCollection('blog', ({ data }) => !data.rascunho))
-  .sort((a, b) => b.data.data.valueOf() - a.data.data.valueOf())
-  .slice(0, 3);
-const fmt = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
-// Enquanto o blog não tem posts, mostra os próximos temas.
+const posts = (await postsPublicados()).slice(0, 3);
+// Enquanto o blog não tem posts, mostra os próximos temas (sem link, para não levar a uma página vazia).
 const proximos = [
-  { href: '/blog', meta: 'Mercado e crédito · em breve', titulo: 'Além do banco: CRI, debênture e fundos financiando a incorporação', resumo: 'Como o mercado de capitais virou fonte de crédito para as incorporadoras e o que isso muda na sua obra.' },
-  { href: '/blog', meta: 'Gestão · em breve', titulo: '5 sinais de que o caixa da obra fugiu do controle', resumo: 'Os sintomas mais comuns de um caixa desorganizado e como corrigir antes que vire problema.' },
-  { href: '/blog', meta: 'Leo · em breve', titulo: 'Conheça o Leo, a IA que trabalha no WhatsApp da incorporadora', resumo: 'O que o Leo faz, como ele entra na rotina da equipe e por que ele não muda o jeito que vocês trabalham.' },
+  { meta: 'Mercado e crédito · em breve', titulo: 'Além do banco: CRI, debênture e fundos financiando a incorporação', resumo: 'Como o mercado de capitais virou fonte de crédito para as incorporadoras e o que isso muda na sua obra.' },
+  { meta: 'Gestão · em breve', titulo: '5 sinais de que o caixa da obra fugiu do controle', resumo: 'Os sintomas mais comuns de um caixa desorganizado e como corrigir antes que vire problema.' },
+  { meta: 'Leo · em breve', titulo: 'Conheça o Leo, a IA que trabalha no WhatsApp da incorporadora', resumo: 'O que o Leo faz, como ele entra na rotina da equipe e por que ele não muda o jeito que vocês trabalham.' },
 ];
 ---
 <Base>
   <!-- Abertura -->
   <section class="hero">
-    <img class="hero-foto" src={foto(FOTOS.predio.id, 2200)} srcset={`${foto(FOTOS.predio.id, 900)} 900w, ${foto(FOTOS.predio.id, 1500)} 1500w, ${foto(FOTOS.predio.id, 2200)} 2200w`} sizes="100vw" alt={FOTOS.predio.alt} fetchpriority="high" />
+    <img class="hero-foto" src={foto(FOTOS.predio.id, 2200)} srcset={fotoSrcset(FOTOS.predio.id)} sizes="100vw" alt={FOTOS.predio.alt} fetchpriority="high" />
     <div class="recorte hero-conteudo">
       <h1>A incorporação inteira, em uma plataforma.</h1>
       <p class="hero-sub">Do terreno às chaves: financeiro, obras, compras, vendas e corretores no mesmo sistema. Com o Leo, a inteligência artificial que trabalha no WhatsApp da sua empresa.</p>
@@ -189,18 +186,28 @@ const proximos = [
       <div class="cabeca-secao linha">
         <div>
           <h2 data-reveal>Mercado, crédito e gestão para quem incorpora</h2>
-          <p data-reveal>Conteúdos sobre juros, crédito imobiliário, CRI, fundos e gestão de obras, toda semana no blog.</p>
+          <p data-reveal>{posts.length > 0
+            ? 'Conteúdos sobre juros, crédito imobiliário, CRI, fundos e gestão de obras, toda semana no blog.'
+            : 'O blog começa em breve, com um texto novo toda terça-feira. Estes são os primeiros temas.'}</p>
         </div>
-        <a class="link-seta" href="/blog">Ver o blog</a>
+        {posts.length > 0 && <a class="link-seta" href="/blog">Ver o blog</a>}
       </div>
       <div class="posts-grade">
-        {(posts.length > 0 ? posts.map((p) => ({ href: `/blog/${p.id}`, meta: `${p.data.categoria} · ${fmt.format(p.data.data)}`, titulo: p.data.titulo, resumo: p.data.resumo })) : proximos).map((p) => (
-          <a class="post" href={p.href} data-reveal>
-            <span class="meta">{p.meta}</span>
-            <h3>{p.titulo}</h3>
-            <p>{p.resumo}</p>
-          </a>
-        ))}
+        {posts.length > 0
+          ? posts.map((p) => (
+            <a class="post" href={`/blog/${p.id}`} data-reveal>
+              <span class="meta">{p.data.categoria} · {dataDoPost.format(p.data.data)}</span>
+              <h3>{p.data.titulo}</h3>
+              <p>{p.data.resumo}</p>
+            </a>
+          ))
+          : proximos.map((p) => (
+            <div class="post em-breve" data-reveal>
+              <span class="meta">{p.meta}</span>
+              <h3>{p.titulo}</h3>
+              <p>{p.resumo}</p>
+            </div>
+          ))}
       </div>
     </div>
   </section>
@@ -341,6 +348,8 @@ const proximos = [
   /* Conteúdos */
   .posts-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .post { text-decoration: none; background: var(--concreto); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px; transition: transform var(--mov); }
+  .post.em-breve { cursor: default; }
+  .post.em-breve:hover { transform: none; }
   .post:hover { transform: translateY(-3px); }
   .conteudos .cabeca-secao p { margin-top: 12px; font-size: var(--t-lead); color: var(--grafite); }
   .post .meta { font-size: var(--t-pequeno); color: var(--grafite); }

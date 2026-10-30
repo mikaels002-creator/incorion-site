@@ -1,7 +1,7 @@
 ---
 titulo: "Por que criamos a Incorion"
 resumo: "Incorporar já é difícil o bastante. A gestão não precisa ser mais um problema. Este é o nosso compromisso com quem constrói."
-data: 2026-10-27
+data: 2026-11-03
 autor: Equipe Incorion
 categoria: Novidades
 rascunho: true

@@ -1,10 +1,11 @@
 ---
 // Prévia dos posts em rascunho, para aprovação. Fica fora do Google e do mapa do site.
 import Post from '../../components/Post.astro';
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
+import { postsEmPrevia } from '../../lib/blog';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => data.rascunho);
+  const posts = await postsEmPrevia();
   return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
 const { post } = Astro.props;
